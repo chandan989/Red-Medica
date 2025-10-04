@@ -61,15 +61,15 @@ export const Navbar = () => {
             <span className="ml-3 text-2xl font-bold tracking-tighter text-gray-800">Red Médica</span>
           </Link>
 
-          <nav className="hidden md:flex items-center space-x-8 text-sm font-medium">
+          <nav className="hidden md:flex items-center space-x-1 text-sm font-medium">
             {navLinks.map((link) => (
               <Link
                 key={link.path}
                 to={link.path}
-                className={`transition-colors duration-300 ${
+                className={`transition-colors duration-300 px-3 py-2 rounded-md ${
                   isActive(link.path)
-                    ? 'text-blue-600 font-semibold'
-                    : 'text-gray-600 hover:text-blue-600'
+                    ? 'bg-blue-100 text-blue-700 font-semibold'
+                    : 'text-gray-600 hover:bg-blue-600 hover:text-white'
                 }`}
               >
                 {link.label}
@@ -84,7 +84,7 @@ export const Navbar = () => {
                   <DropdownMenuTrigger asChild>
                     <Button
                       variant="outline"
-                      className="border-gray-300 hover:border-blue-600 text-gray-900 hover:text-blue-600 text-sm font-medium"
+                      className="border-gray-300 hover:border-blue-600 text-gray-900 hover:text-white text-sm font-medium"
                     >
                       <div className="mr-2 h-2 w-2 rounded-full bg-green-500" />
                       {shortAddress(user.address)}
@@ -106,7 +106,7 @@ export const Navbar = () => {
                 </DropdownMenu>
               ) : (
                 <Button onClick={() => navigate('/connect')} className="cta-gradient text-white font-semibold px-5 py-2.5 rounded-lg text-sm hover:opacity-90 transition-all duration-300">
-                  Connect Wallet
+                  Get Started
                 </Button>
               )}
             </div>
@@ -125,16 +125,16 @@ export const Navbar = () => {
 
         {mobileMenuOpen && (
           <div className="md:hidden bg-white border-t border-gray-200 -mx-4 sm:-mx-6 lg:-mx-8 px-4 sm:px-6 lg:px-8 py-4">
-            <nav className="flex flex-col gap-4">
+            <nav className="flex flex-col gap-1">
               {navLinks.map((link) => (
                 <Link
                   key={link.path}
                   to={link.path}
                   onClick={() => setMobileMenuOpen(false)}
-                  className={`block text-base font-medium transition-colors duration-300 ${
+                  className={`block text-base font-medium transition-colors duration-300 px-3 py-2 rounded-md ${
                     isActive(link.path)
-                      ? 'text-blue-600'
-                      : 'text-gray-600 hover:text-blue-600'
+                      ? 'bg-blue-100 text-blue-700'
+                      : 'text-gray-600 hover:bg-blue-600 hover:text-white'
                   }`}
                 >
                   {link.label}
@@ -155,7 +155,7 @@ export const Navbar = () => {
                 </div>
               ) : (
                 <Button onClick={() => { navigate('/connect'); setMobileMenuOpen(false); }} className="w-full cta-gradient text-white font-semibold rounded-lg text-sm">
-                  Connect Wallet
+                  Get Started
                 </Button>
               )}
             </div>

@@ -7,7 +7,7 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { useAppStore } from '@/lib/store';
-import { Copy, Check, User, Shield, Bell, Settings as SettingsIcon } from 'lucide-react';
+import { Copy, Check, User, Shield, Bell, Settings as SettingsIcon, Edit } from 'lucide-react';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Switch } from '@/components/ui/switch';
 import { toast } from 'sonner';
@@ -28,291 +28,250 @@ const Profile = () => {
   };
 
   return (
-    <div className="min-h-screen">
-      <Navbar />
+    <>
+      <style>{`
+        body {
+            font-family: 'Inter', sans-serif;
+            background: #F7FAFC;
+            color: #ffffff;
+        }
+        .card {
+            background: #FFFFFF;
+            border: 1px solid #E2E8F0;
+            transition: all 0.3s ease;
+            border-radius: 0.75rem;
+        }
+        .card:hover {
+            border-color: #3B82F6;
+            transform: translateY(-5px);
+            box-shadow: 0 10px 25px -5px rgba(59, 130, 246, 0.1), 0 8px 10px -6px rgba(59, 130, 246, 0.1);
+        }
+        .cta-gradient {
+            background: linear-gradient(90deg, #3B82F6, #2563EB);
+            color: white;
+            transition: opacity 0.3s ease;
+        }
+        .cta-gradient:hover {
+            opacity: 0.9;
+        }
+        ::selection {
+            background-color: #3B82F6;
+            color: white;
+        }
+      `}</style>
+      <div className="min-h-screen bg-gray-50 font-sans">
+        <Navbar />
 
-      <div className="container mx-auto max-w-5xl px-4 py-8">
-        <div className="mb-8">
-          <h1 className="mb-2 text-3xl font-bold">Profile & Settings</h1>
-          <p className="text-muted-foreground">Manage your account and preferences</p>
-        </div>
-
-        {/* Profile Summary */}
-        <Card className="mb-8 shadow-soft">
-          <CardContent className="p-6">
-            <div className="flex flex-col gap-6 sm:flex-row sm:items-center">
-              <div className="flex h-20 w-20 items-center justify-center rounded-full bg-gradient-to-br from-primary to-secondary text-3xl font-bold text-white">
-                {user.name.charAt(0)}
-              </div>
-              <div className="flex-1">
-                <h2 className="mb-1 text-2xl font-bold">{user.name}</h2>
-                <p className="mb-2 text-muted-foreground">{user.email}</p>
-                <div className="flex items-center gap-2">
-                  <code className="rounded bg-muted px-3 py-1 text-sm">
-                    {user.address.slice(0, 10)}...{user.address.slice(-8)}
-                  </code>
-                  <Button variant="ghost" size="sm" onClick={copyAddress}>
-                    {copied ? <Check className="h-4 w-4" /> : <Copy className="h-4 w-4" />}
-                  </Button>
-                </div>
-              </div>
-              <div className="flex flex-col gap-2">
-                <div className="rounded-lg bg-primary/10 px-4 py-2 text-center">
-                  <div className="text-sm text-muted-foreground">Role</div>
-                  <div className="font-semibold text-primary">{user.role}</div>
-                </div>
+        <main className="container mx-auto max-w-7xl px-4 pt-28 pb-8">
+          {/* Header */}
+          <div className="mb-12 text-center">
+            <div className="mb-6 inline-flex rounded-full bg-blue-100 p-4">
+                <User className="h-10 w-10 text-blue-600" />
+            </div>
+            <h1 className="text-4xl font-black tracking-tighter text-gray-900 md:text-6xl">
+              {user.name}
+            </h1>
+            <p className="mx-auto max-w-2xl text-lg text-gray-600">
+             {user.email}
+            </p>
+            <div className="mt-4 flex items-center justify-center gap-2">
+              <code className="rounded bg-gray-200 px-3 py-1 text-sm text-gray-700">
+                {user.address}
+              </code>
+              <Button variant="ghost" size="sm" onClick={copyAddress} className="text-gray-600 hover:text-blue-600">
+                {copied ? <Check className="h-4 w-4 text-green-500" /> : <Copy className="h-4 w-4" />}
+              </Button>
+            </div>
+            <div className="mt-2 flex items-center justify-center gap-4">
+                <div className="font-semibold text-blue-600">{user.role}</div>
                 {user.verified && (
-                  <div className="flex items-center gap-2 text-success">
+                  <div className="flex items-center gap-1 text-green-600">
                     <Shield className="h-4 w-4" />
                     <span className="text-sm font-medium">Verified</span>
                   </div>
                 )}
-              </div>
             </div>
-          </CardContent>
-        </Card>
+          </div>
 
-        {/* Statistics */}
-        <div className="mb-8 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
-          <Card className="shadow-soft">
-            <CardContent className="p-6">
-              <div className="text-3xl font-bold text-primary">{user.stats.totalProducts}</div>
-              <div className="text-sm text-muted-foreground">Total Products</div>
-            </CardContent>
-          </Card>
-          <Card className="shadow-soft">
-            <CardContent className="p-6">
-              <div className="text-3xl font-bold text-secondary">{user.stats.totalTransfers}</div>
-              <div className="text-sm text-muted-foreground">Total Transfers</div>
-            </CardContent>
-          </Card>
-          <Card className="shadow-soft">
-            <CardContent className="p-6">
-              <div className="text-3xl font-bold text-success">
-                {user.stats.avgDeliveryTime} days
-              </div>
-              <div className="text-sm text-muted-foreground">Avg. Delivery Time</div>
-            </CardContent>
-          </Card>
-          <Card className="shadow-soft">
-            <CardContent className="p-6">
-              <div className="text-3xl font-bold text-warning">{user.stats.trustScore}/100</div>
-              <div className="text-sm text-muted-foreground">Trust Score</div>
-            </CardContent>
-          </Card>
-        </div>
-
-        {/* Settings Tabs */}
-        <Tabs defaultValue="personal" className="space-y-6">
-          <TabsList className="grid w-full grid-cols-4">
-            <TabsTrigger value="personal">Personal</TabsTrigger>
-            <TabsTrigger value="notifications">Notifications</TabsTrigger>
-            <TabsTrigger value="security">Security</TabsTrigger>
-            <TabsTrigger value="integrations">Integrations</TabsTrigger>
-          </TabsList>
-
-          {/* Personal Information */}
-          <TabsContent value="personal">
-            <Card className="shadow-soft">
-              <CardHeader>
-                <CardTitle>Personal Information</CardTitle>
-                <CardDescription>Update your profile details</CardDescription>
+          {/* Statistics */}
+          <div className="mb-8 grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
+            <Card>
+              <CardHeader className="flex flex-row items-center justify-between pb-2">
+                <CardTitle className="text-sm font-medium text-gray-600">Total Products</CardTitle>
+                <User className="h-5 w-5 text-gray-400" />
               </CardHeader>
-              <CardContent className="space-y-4">
-                <div>
-                  <Label htmlFor="org-name">Organization Name</Label>
-                  <Input id="org-name" defaultValue={user.name} />
-                </div>
-                <div>
-                  <Label htmlFor="email">Email Address</Label>
-                  <Input id="email" type="email" defaultValue={user.email} />
-                </div>
-                <div>
-                  <Label htmlFor="license">License Number</Label>
-                  <Input id="license" defaultValue={user.license} />
-                </div>
-                <div>
-                  <Label htmlFor="wallet">Wallet Address (Read-only)</Label>
-                  <Input id="wallet" value={user.address} readOnly />
-                </div>
-                <Button className="gradient-primary">Save Changes</Button>
+              <CardContent>
+                <div className="text-3xl font-bold text-gray-900">{user.stats.totalProducts}</div>
+                <p className="text-xs text-gray-500">Managed by you</p>
               </CardContent>
             </Card>
-          </TabsContent>
-
-          {/* Notifications */}
-          <TabsContent value="notifications">
-            <Card className="shadow-soft">
-              <CardHeader>
-                <CardTitle>Notification Preferences</CardTitle>
-                <CardDescription>Manage how you receive updates</CardDescription>
+            <Card>
+              <CardHeader className="flex flex-row items-center justify-between pb-2">
+                <CardTitle className="text-sm font-medium text-gray-600">Total Transfers</CardTitle>
+                <User className="h-5 w-5 text-gray-400" />
               </CardHeader>
-              <CardContent className="space-y-6">
-                <div className="flex items-center justify-between">
-                  <div>
-                    <div className="font-medium">Email Notifications</div>
-                    <div className="text-sm text-muted-foreground">
-                      Receive updates via email
-                    </div>
-                  </div>
-                  <Switch defaultChecked />
-                </div>
-                <div className="flex items-center justify-between">
-                  <div>
-                    <div className="font-medium">SMS Alerts</div>
-                    <div className="text-sm text-muted-foreground">
-                      Get critical alerts via SMS
-                    </div>
-                  </div>
-                  <Switch />
-                </div>
-                <div className="flex items-center justify-between">
-                  <div>
-                    <div className="font-medium">Browser Notifications</div>
-                    <div className="text-sm text-muted-foreground">
-                      Real-time browser alerts
-                    </div>
-                  </div>
-                  <Switch defaultChecked />
-                </div>
-                <div className="flex items-center justify-between">
-                  <div>
-                    <div className="font-medium">Temperature Alerts</div>
-                    <div className="text-sm text-muted-foreground">
-                      Notify on temperature deviations
-                    </div>
-                  </div>
-                  <Switch defaultChecked />
-                </div>
-                <div className="flex items-center justify-between">
-                  <div>
-                    <div className="font-medium">Transfer Notifications</div>
-                    <div className="text-sm text-muted-foreground">
-                      Alert on custody transfers
-                    </div>
-                  </div>
-                  <Switch defaultChecked />
-                </div>
-                <Button className="gradient-primary">Save Preferences</Button>
+              <CardContent>
+                <div className="text-3xl font-bold text-gray-900">{user.stats.totalTransfers}</div>
+                <p className="text-xs text-gray-500">Across all products</p>
               </CardContent>
             </Card>
-          </TabsContent>
-
-          {/* Security */}
-          <TabsContent value="security">
-            <Card className="shadow-soft">
-              <CardHeader>
-                <CardTitle>Security Settings</CardTitle>
-                <CardDescription>Manage your account security</CardDescription>
+            <Card>
+              <CardHeader className="flex flex-row items-center justify-between pb-2">
+                <CardTitle className="text-sm font-medium text-gray-600">Avg. Delivery</CardTitle>
+                <User className="h-5 w-5 text-gray-400" />
               </CardHeader>
-              <CardContent className="space-y-6">
-                <div>
-                  <Label htmlFor="current-password">Current Password</Label>
-                  <Input id="current-password" type="password" />
-                </div>
-                <div>
-                  <Label htmlFor="new-password">New Password</Label>
-                  <Input id="new-password" type="password" />
-                </div>
-                <div>
-                  <Label htmlFor="confirm-password">Confirm New Password</Label>
-                  <Input id="confirm-password" type="password" />
-                </div>
-                <Button className="gradient-primary">Change Password</Button>
+              <CardContent>
+                <div className="text-3xl font-bold text-gray-900">{user.stats.avgDeliveryTime} days</div>
+                <p className="text-xs text-gray-500">For your shipments</p>
+              </CardContent>
+            </Card>
+            <Card>
+              <CardHeader className="flex flex-row items-center justify-between pb-2">
+                <CardTitle className="text-sm font-medium text-gray-600">Trust Score</CardTitle>
+                <Shield className="h-5 w-5 text-gray-400" />
+              </CardHeader>
+              <CardContent>
+                <div className="text-3xl font-bold text-gray-900">{user.stats.trustScore}/100</div>
+                <p className="text-xs text-gray-500">Based on network activity</p>
+              </CardContent>
+            </Card>
+          </div>
 
-                <div className="border-t pt-6">
-                  <div className="mb-4 flex items-center justify-between">
-                    <div>
-                      <div className="font-medium">Two-Factor Authentication</div>
-                      <div className="text-sm text-muted-foreground">
-                        Add an extra layer of security
-                      </div>
-                    </div>
-                    <Switch />
-                  </div>
-                </div>
+          {/* Settings Tabs */}
+          <Card>
+            <CardHeader>
+                <CardTitle className="text-xl font-bold">Settings</CardTitle>
+                <CardDescription className="text-gray-600">Manage your account and preferences</CardDescription>
+            </CardHeader>
+            <CardContent>
+                <Tabs defaultValue="personal" className="space-y-6">
+                    <TabsList className="grid w-full grid-cols-4">
+                        <TabsTrigger value="personal">
+                            <User className="mr-2 h-4 w-4" />
+                            Personal
+                        </TabsTrigger>
+                        <TabsTrigger value="notifications">
+                            <Bell className="mr-2 h-4 w-4" />
+                            Notifications
+                        </TabsTrigger>
+                        <TabsTrigger value="security">
+                            <Shield className="mr-2 h-4 w-4" />
+                            Security
+                        </TabsTrigger>
+                        <TabsTrigger value="integrations">
+                            <SettingsIcon className="mr-2 h-4 w-4" />
+                            Integrations
+                        </TabsTrigger>
+                    </TabsList>
 
-                <div className="border-t pt-6">
-                  <h3 className="mb-4 font-semibold">Connected Devices</h3>
-                  <div className="space-y-3">
-                    <div className="flex items-center justify-between rounded-lg border p-3">
-                      <div>
-                        <div className="font-medium">Current Device</div>
-                        <div className="text-sm text-muted-foreground">
-                          Last active: Just now
+                    {/* Personal Information */}
+                    <TabsContent value="personal">
+                        <div className="space-y-4 mt-6">
+                            <div>
+                                <Label htmlFor="org-name" className="text-gray-700">Organization Name</Label>
+                                <Input id="org-name" defaultValue={user.name} className="mt-1"/>
+                            </div>
+                            <div>
+                                <Label htmlFor="email" className="text-gray-700">Email Address</Label>
+                                <Input id="email" type="email" defaultValue={user.email} className="mt-1"/>
+                            </div>
+                            <div>
+                                <Label htmlFor="license" className="text-gray-700">License Number</Label>
+                                <Input id="license" defaultValue={user.license} className="mt-1"/>
+                            </div>
+                            <div>
+                                <Label htmlFor="wallet" className="text-gray-700">Wallet Address (Read-only)</Label>
+                                <Input id="wallet" value={user.address} readOnly className="mt-1 bg-gray-100"/>
+                            </div>
+                            <Button className="w-full sm:w-auto cta-gradient font-semibold">
+                                <Edit className="mr-2 h-4 w-4" />
+                                Save Changes
+                            </Button>
                         </div>
-                      </div>
-                      <span className="text-xs text-success">Active</span>
-                    </div>
-                  </div>
-                </div>
-              </CardContent>
-            </Card>
-          </TabsContent>
+                    </TabsContent>
 
-          {/* Integrations */}
-          <TabsContent value="integrations">
-            <Card className="shadow-soft">
-              <CardHeader>
-                <CardTitle>Integrations</CardTitle>
-                <CardDescription>Connect external services and devices</CardDescription>
-              </CardHeader>
-              <CardContent className="space-y-6">
-                <div className="rounded-lg border p-4">
-                  <div className="mb-4 flex items-center justify-between">
-                    <div>
-                      <div className="font-medium">IoT Temperature Sensors</div>
-                      <div className="text-sm text-muted-foreground">
-                        Connect temperature monitoring devices
-                      </div>
-                    </div>
-                    <Button variant="outline">Configure</Button>
-                  </div>
-                </div>
+                    {/* Notifications */}
+                    <TabsContent value="notifications">
+                        <div className="space-y-6 mt-6">
+                            <div className="flex items-center justify-between rounded-lg border p-4">
+                                <div>
+                                    <div className="font-medium text-gray-900">Email Notifications</div>
+                                    <div className="text-sm text-gray-600">Receive updates via email</div>
+                                </div>
+                                <Switch defaultChecked />
+                            </div>
+                            <div className="flex items-center justify-between rounded-lg border p-4">
+                                <div>
+                                    <div className="font-medium text-gray-900">SMS Alerts</div>
+                                    <div className="text-sm text-gray-600">Get critical alerts via SMS</div>
+                                </div>
+                                <Switch />
+                            </div>
+                            <div className="flex items-center justify-between rounded-lg border p-4">
+                                <div>
+                                    <div className="font-medium text-gray-900">Browser Notifications</div>
+                                    <div className="text-sm text-gray-600">Real-time browser alerts</div>
+                                </div>
+                                <Switch defaultChecked />
+                            </div>
+                            <Button className="w-full sm:w-auto cta-gradient font-semibold">
+                                Save Preferences
+                            </Button>
+                        </div>
+                    </TabsContent>
 
-                <div className="rounded-lg border p-4">
-                  <div className="mb-4 flex items-center justify-between">
-                    <div>
-                      <div className="font-medium">Third-Party Logistics</div>
-                      <div className="text-sm text-muted-foreground">
-                        Integrate with shipping providers
-                      </div>
-                    </div>
-                    <Button variant="outline">Connect</Button>
-                  </div>
-                </div>
+                    {/* Security */}
+                    <TabsContent value="security">
+                        <div className="space-y-6 mt-6">
+                            <div>
+                                <Label htmlFor="current-password">Current Password</Label>
+                                <Input id="current-password" type="password" />
+                            </div>
+                            <div>
+                                <Label htmlFor="new-password">New Password</Label>
+                                <Input id="new-password" type="password" />
+                            </div>
+                            <Button className="cta-gradient font-semibold">Change Password</Button>
 
-                <div className="rounded-lg border p-4">
-                  <div className="mb-4 flex items-center justify-between">
-                    <div>
-                      <div className="font-medium">API Access</div>
-                      <div className="text-sm text-muted-foreground">
-                        Generate API keys for custom integrations
-                      </div>
-                    </div>
-                    <Button variant="outline">Manage Keys</Button>
-                  </div>
-                </div>
+                            <div className="border-t pt-6">
+                                <div className="flex items-center justify-between">
+                                    <div>
+                                        <div className="font-medium">Two-Factor Authentication</div>
+                                        <div className="text-sm text-gray-600">Add an extra layer of security</div>
+                                    </div>
+                                    <Switch />
+                                </div>
+                            </div>
+                        </div>
+                    </TabsContent>
 
-                <div className="rounded-lg border p-4">
-                  <div className="mb-4 flex items-center justify-between">
-                    <div>
-                      <div className="font-medium">Webhook Configuration</div>
-                      <div className="text-sm text-muted-foreground">
-                        Set up webhooks for event notifications
-                      </div>
-                    </div>
-                    <Button variant="outline">Setup</Button>
-                  </div>
-                </div>
-              </CardContent>
-            </Card>
-          </TabsContent>
-        </Tabs>
+                    {/* Integrations */}
+                    <TabsContent value="integrations">
+                        <div className="space-y-4 mt-6">
+                            <div className="rounded-lg border p-4 flex items-center justify-between">
+                                <div>
+                                    <div className="font-medium">IoT Temperature Sensors</div>
+                                    <div className="text-sm text-gray-600">Connect temperature monitoring devices</div>
+                                </div>
+                                <Button variant="outline">Configure</Button>
+                            </div>
+                            <div className="rounded-lg border p-4 flex items-center justify-between">
+                                <div>
+                                    <div className="font-medium">API Access</div>
+                                    <div className="text-sm text-gray-600">Generate API keys for custom integrations</div>
+                                </div>
+                                <Button variant="outline">Manage Keys</Button>
+                            </div>
+                        </div>
+                    </TabsContent>
+                </Tabs>
+            </CardContent>
+          </Card>
+        </main>
+
+        <Footer />
       </div>
-
-      <Footer />
-    </div>
+    </>
   );
 };
 

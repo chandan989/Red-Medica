@@ -75,7 +75,7 @@ const Verify = () => {
       <div className="min-h-screen bg-white">
         <Navbar />
 
-        <main className="container mx-auto max-w-5xl px-4 py-16 sm:py-24">
+        <main className="container mx-auto max-w-5xl px-4 pt-28 pb-8">
           {searchResult === 'none' && (
             <div className="mb-12 text-center">
               <div className="mb-6 inline-flex rounded-full bg-blue-100 p-4">

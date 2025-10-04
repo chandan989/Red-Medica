@@ -157,11 +157,11 @@ const Dashboard = () => {
                       Register New Product
                     </Button>
                   </Link>
-                  <Button variant="outline" size="lg" className="w-full font-medium text-gray-700 hover:bg-gray-100 hover:border-blue-500">
+                  <Button variant="outline" size="lg" className="w-full font-medium text-gray-700 hover:text-blue-500 hover:bg-gray-100 hover:border-blue-500">
                     <QrCode className="mr-2 h-5 w-5" />
                     Generate QR Codes
                   </Button>
-                  <Button variant="outline" size="lg" className="w-full font-medium text-gray-700 hover:bg-gray-100 hover:border-blue-500">
+                  <Button variant="outline" size="lg" className="w-full font-medium text-gray-700 hover:text-blue-500 hover:bg-gray-100 hover:border-blue-500">
                     <Eye className="mr-2 h-5 w-5" />
                     View All Products
                   </Button>
