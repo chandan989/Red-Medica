@@ -2,7 +2,7 @@
 
 <div align="center">
 
-![Red Médica Logo](./logo.svg)
+<img src="./logo.svg" alt="Red Médica Logo" width="100" />
 
 **Building trust in healthcare, one block at a time.**
 
@@ -260,7 +260,6 @@ Built for scale, security, and speed with enterprise-grade infrastructure.
 | **Storage** | IPFS + Pinata | Metadata & documents | Decentralized, permanent |
 
 **Smart Contracts Architecture:**
-
 ```solidity
 // Simplified contract structure
 contract MedicalSupplyChain {
