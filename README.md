@@ -2575,86 +2575,6 @@ Red Médica is a technology platform that provides supply chain transparency too
 
 Always consult healthcare professionals and follow local regulations. Blockchain verification is a tool to enhance transparency, not a replacement for proper regulatory compliance.
 
-### Privacy Policy
-
-Red Médica respects user privacy:
-- Personal data stored in Firebase follows GDPR/CCPA guidelines
-- Blockchain data is pseudonymous (wallet addresses, not names)
-- Analytics data is aggregated and anonymized
-- Users control their own private keys
-- See full [Privacy Policy](https://redmedica.network/privacy)
-
----
-
-## 🔗 Important Links
-
-### Official Resources
-
-- 🌐 **Website**: [redmedica.network](https://redmedica.network)
-- 📖 **Documentation**: [docs.redmedica.network](https://docs.redmedica.network)
-- 📊 **Explorer**: [explorer.redmedica.network](https://explorer.redmedica.network)
-- 🔐 **Security**: [security.redmedica.network](https://security.redmedica.network)
-- 🎓 **Academy**: [academy.redmedica.network](https://academy.redmedica.network)
-
-### Blockchain & Development
-
-- 💻 **GitHub**: [github.com/red-medica](https://github.com/red-medica)
-- 🔗 **Polkadot.js Apps**: [polkadot.js.org/apps](https://polkadot.js.org/apps)
-- 📦 **NPM Package**: [npmjs.com/package/@red-medica/sdk](https://npmjs.com/package/@red-medica/sdk)
-- 🔌 **API Status**: [status.redmedica.network](https://status.redmedica.network)
-- 📝 **Blog**: [blog.redmedica.network](https://blog.redmedica.network)
-- 🎨 **Brand Kit**: [redmedica.network/brand](https://redmedica.network/brand)
-
-### Social Media
-
-- 🐦 **Twitter**: [@RedMedicaDAO](https://twitter.com/RedMedicaDAO)
-- 💼 **LinkedIn**: [Red Médica](https://linkedin.com/company/red-medica)
-- 📸 **Instagram**: [@redmedica](https://instagram.com/redmedica)
-- 🎥 **YouTube**: [Red Médica Channel](https://youtube.com/@redmedica)
-- 🔴 **Reddit**: [r/RedMedica](https://reddit.com/r/redmedica)
-
-### Community
-
-- 💬 **Discord**: [discord.gg/redmedica](https://discord.gg/redmedica)
-- 📱 **Telegram**: [t.me/redmedica](https://t.me/redmedica)
-- 💬 **Forum**: [forum.redmedica.network](https://forum.redmedica.network)
-- ❓ **Support**: [support@redmedica.network](mailto:support@redmedica.network)
-
----
-
-## 💬 Get In Touch
-
-### For General Inquiries
-
-📧 **Email**: team@redmedica.network  
-🌐 **Website**: [redmedica.network/contact](https://redmedica.network/contact)  
-💬 **Discord**: [Join our server](https://discord.gg/redmedica)
-
-### For Partnerships
-
-📧 **Email**: partnerships@redmedica.network  
-📅 **Schedule a call**: [calendly.com/redmedica](https://calendly.com/redmedica)  
-💼 **LinkedIn**: [Connect with us](https://linkedin.com/company/red-medica)
-
-### For Press & Media
-
-📧 **Email**: press@redmedica.network  
-📦 **Press Kit**: [redmedica.network/press](https://redmedica.network/press)  
-📰 **Media Mentions**: [redmedica.network/media](https://redmedica.network/media)
-
-### For Security Issues
-
-🔒 **Email**: security@redmedica.network  
-🐛 **Bug Bounty**: Up to $10,000 for critical vulnerabilities  
-🔐 **PGP Key**: [Download](https://redmedica.network/pgp)
-
-### For Developers
-
-💻 **GitHub Discussions**: [github.com/red-medica/discussions](https://github.com/red-medica/discussions)  
-📚 **Stack Overflow**: Tag `red-medica`  
-🎮 **Discord Dev Channel**: #developers
-
----
 
 <div align="center">
 
@@ -2676,6 +2596,6 @@ Red Médica respects user privacy:
 
 [🌟 Star on GitHub](https://github.com/your-username/red-medica) | [🐛 Report Bug](https://github.com/your-username/red-medica/issues) | [💡 Request Feature](https://github.com/your-username/red-medica/issues) | [📖 Read Docs](https://docs.redmedica.network) | [🔗 Polkadot Wiki](https://wiki.polkadot.network)
 
-<img src="https://via.placeholder.com/1200x100/E6007A/ffffff?text=Together%2C+we+can+make+healthcare+safer+for+everyone+%E2%80%A2+Built+on+Polkadot" alt="Footer Banner" />
+[//]: # (<img src="https://via.placeholder.com/1200x100/E6007A/ffffff?text=Together%2C+we+can+make+healthcare+safer+for+everyone+%E2%80%A2+Built+on+Polkadot" alt="Footer Banner" />)
 
 </div>
