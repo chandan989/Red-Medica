@@ -2,7 +2,7 @@
 
 <div align="center">
 
-![Red Médica Banner](https://via.placeholder.com/1200x300/667eea/ffffff?text=Red+M%C3%A9dica+%E2%9A%95%EF%B8%8F)
+![Red Médica Logo](./logo.svg)
 
 **Building trust in healthcare, one block at a time.**
 
