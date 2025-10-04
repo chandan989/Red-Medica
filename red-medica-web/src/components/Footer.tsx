@@ -1,98 +1,43 @@
-import { Activity, Github, Twitter, Mail, Book } from 'lucide-react';
-import { Link } from 'react-router-dom';
-import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
+import { Link, useLocation } from 'react-router-dom';
 
 export const Footer = () => {
+  const location = useLocation();
+
+  const navLinks = [
+    { path: '/dashboard', label: 'Dashboard' },
+    { path: '/verify', label: 'Verify' },
+    { path: '/analytics', label: 'Analytics' },
+    { path: '/help', label: 'Help' },
+  ];
+
+  if (location.pathname === '/') {
+    return null;
+  }
+
   return (
-    <footer className="border-t bg-muted/30 mt-24">
-      <div className="container mx-auto px-4 py-12">
-        <div className="grid grid-cols-1 gap-8 md:grid-cols-4">
-          {/* Brand */}
-          <div className="space-y-4">
-            <div className="flex items-center gap-2">
-              <div className="gradient-primary rounded-lg p-2">
-                <Activity className="h-5 w-5 text-white" />
-              </div>
-              <span className="font-heading text-xl font-bold">Red Médica</span>
-            </div>
-            <p className="text-sm text-muted-foreground">
-              Building trust in healthcare through blockchain technology.
-            </p>
-            <div className="flex gap-2">
-              <Button variant="ghost" size="icon" className="h-8 w-8">
-                <Twitter className="h-4 w-4" />
-              </Button>
-              <Button variant="ghost" size="icon" className="h-8 w-8">
-                <Github className="h-4 w-4" />
-              </Button>
-              <Button variant="ghost" size="icon" className="h-8 w-8">
-                <Mail className="h-4 w-4" />
-              </Button>
-            </div>
+    <footer className="py-12 bg-white border-t border-gray-200">
+      <div className="container mx-auto px-4 sm:px-6 lg:px-8">
+        <div className="text-center">
+          <div className="flex items-center justify-center mb-4">
+            <img src="/logo.svg" alt="Red Médica Logo" className="h-7 w-auto" />
+            <span className="ml-2 text-xl font-bold text-gray-800">Red Médica</span>
           </div>
-
-          {/* Quick Links */}
-          <div>
-            <h3 className="mb-4 font-heading text-sm font-semibold">Product</h3>
-            <ul className="space-y-2 text-sm">
-              <li>
-                <Link to="/dashboard" className="text-muted-foreground hover:text-foreground">
-                  Dashboard
-                </Link>
-              </li>
-              <li>
-                <Link to="/verify" className="text-muted-foreground hover:text-foreground">
-                  Verify Products
-                </Link>
-              </li>
-              <li>
-                <Link to="/analytics" className="text-muted-foreground hover:text-foreground">
-                  Analytics
-                </Link>
-              </li>
-            </ul>
+          <nav className="flex justify-center flex-wrap gap-x-6 gap-y-2 mb-6 text-sm font-medium">
+            {navLinks.map(link => (
+                 <Link key={link.path} to={link.path} className="text-gray-600 hover:text-blue-600 transition-colors">
+                    {link.label}
+                 </Link>
+            ))}
+          </nav>
+          <div className="flex justify-center items-center space-x-6 mb-6">
+            <a href="#" className="text-gray-400 hover:text-blue-600 transition-colors">
+                <svg className="h-5 w-5" fill="currentColor" viewBox="0 0 24 24"><path d="M24 4.557c-.883.392-1.832.656-2.828.775 1.017-.609 1.798-1.574 2.165-2.724-.951.564-2.005.974-3.127 1.195-.897-.957-2.178-1.555-3.594-1.555-3.179 0-5.515 2.966-4.797 6.045-4.091-.205-7.719-2.165-10.148-5.144-1.29 2.213-.669 5.108 1.523 6.574-.806-.026-1.566-.247-2.229-.616v.064c0 2.298 1.634 4.214 3.791 4.649-.57.156-1.173.226-1.793.226-.299 0-.584-.028-.865-.083.632 1.953 2.449 3.377 4.604 3.417-1.77 1.39-3.996 2.215-6.42 2.215-.41 0-.814-.024-1.21-.07 2.288 1.465 5.013 2.32 7.942 2.32 9.49 0 14.689-7.86 14.689-14.689 0-.223-.005-.446-.014-.668.995-.718 1.86-1.62 2.55-2.65z" /></svg>
+            </a>
+            <a href="#" className="text-gray-400 hover:text-blue-600 transition-colors">
+                <svg className="h-5 w-5" fill="currentColor" viewBox="0 0 24 24"><path d="M12 0c-6.626 0-12 5.373-12 12 0 5.302 3.438 9.8 8.207 11.387.599.111.793-.261.793-.577v-2.234c-3.338.726-4.033-1.416-4.033-1.416-.546-1.387-1.333-1.756-1.333-1.756-1.089-.745.083-.729.083-.729 1.205.084 1.839 1.237 1.839 1.237 1.07 1.834 2.807 1.304 3.492.997.107-.775.418-1.305.762-1.604-2.665-.305-5.467-1.334-5.467-5.931 0-1.311.469-2.381 1.236-3.221-.124-.303-.535-1.524.117-3.176 0 0 1.008-.322 3.301 1.23.957-.266 1.983-.399 3.003-.404 1.02.005 2.047.138 3.006.404 2.291-1.552 3.297-1.23 3.297-1.23.653 1.653.242 2.874.118 3.176.77.84 1.235 1.911 1.235 3.221 0 4.609-2.807 5.624-5.479 5.921.43.372.823 1.102.823 2.222v3.293c0 .319.192.694.801.576 4.765-1.589 8.199-6.086 8.199-11.386 0-6.627-5.373-12-12-12z" /></svg>
+            </a>
           </div>
-
-          {/* Resources */}
-          <div>
-            <h3 className="mb-4 font-heading text-sm font-semibold">Resources</h3>
-            <ul className="space-y-2 text-sm">
-              <li>
-                <Link to="/help" className="text-muted-foreground hover:text-foreground">
-                  Documentation
-                </Link>
-              </li>
-              <li>
-                <a href="#" className="text-muted-foreground hover:text-foreground">
-                  API Reference
-                </a>
-              </li>
-              <li>
-                <a href="#" className="text-muted-foreground hover:text-foreground">
-                  Community
-                </a>
-              </li>
-            </ul>
-          </div>
-
-          {/* Newsletter */}
-          <div>
-            <h3 className="mb-4 font-heading text-sm font-semibold">Stay Updated</h3>
-            <p className="mb-4 text-sm text-muted-foreground">
-              Subscribe to our newsletter for updates.
-            </p>
-            <div className="flex gap-2">
-              <Input placeholder="Email address" className="h-9" />
-              <Button size="sm" className="gradient-primary">
-                Subscribe
-              </Button>
-            </div>
-          </div>
-        </div>
-
-        <div className="mt-8 border-t pt-8 text-center text-sm text-muted-foreground">
-          <p>© 2024 Red Médica. All rights reserved. Building trust, one block at a time.</p>
+          <p className="text-sm text-gray-500">&copy; 2025 Red Médica. All Rights Reserved.</p>
         </div>
       </div>
     </footer>
