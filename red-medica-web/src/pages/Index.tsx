@@ -1,5 +1,6 @@
 
 import React, { useEffect, useRef } from 'react';
+import { Link } from 'react-router-dom';
 import { gsap } from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
 import * as THREE from 'three';
@@ -374,7 +375,7 @@ const Index = () => {
                 <a href="#features" className="text-gray-600 hover:text-blue-600 transition-colors duration-300">Features</a>
               </nav>
               <div>
-                <a href="#contact" className="hidden sm:inline-block cta-gradient text-white font-semibold px-5 py-2.5 rounded-lg text-sm hover:opacity-90 transition-all duration-300">Join Discord</a>
+                <Link to="/connect" className="hidden sm:inline-block cta-gradient text-white font-semibold px-5 py-2.5 rounded-lg text-sm hover:opacity-90 transition-all duration-300">Get Started</Link>
               </div>
             </div>
           </div>
@@ -391,11 +392,11 @@ const Index = () => {
                 Red Médica leverages blockchain to create an immutable, transparent, and secure medical supply chain. We're eliminating counterfeit drugs and ensuring patient safety, from manufacturer to patient.
               </p>
               <div className="flex justify-center items-center gap-4 hero-buttons">
-                <a href="#solution" className="cta-gradient text-white font-semibold px-8 py-3.5 rounded-lg text-base hover:opacity-90 transition-all duration-300 glow">Discover the Solution</a>
-                <a href="https://www.youtube.com/watch?v=dQw4w9WgXcQ" target="_blank" rel="noreferrer" className="flex items-center gap-2 text-gray-600 font-medium hover:text-blue-600 transition-colors duration-300">
-                  <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M14.752 11.168l-3.197-2.132A1 1 0 0010 9.87v4.263a1 1 0 001.555.832l3.197-2.132a1 1 0 000-1.664z" /><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M21 12a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
-                  <span>Watch Demo</span>
-                </a>
+                <Link to="/connect" className="cta-gradient text-white font-semibold px-8 py-3.5 rounded-lg text-base hover:opacity-90 transition-all duration-300 glow">Get Started</Link>
+                <Link to="/verify" className="flex items-center gap-2 text-gray-600 font-medium hover:text-blue-600 transition-colors duration-300">
+                  <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 12l2 2 4-4m0-4a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
+                  <span>Verify Product</span>
+                </Link>
               </div>
             </div>
           </section>
@@ -594,7 +595,7 @@ const Index = () => {
                 <div className="relative">
                   <h2 className="text-3xl md:text-5xl font-bold tracking-tighter text-white mb-4">Join Us in Building the Future of Healthcare.</h2>
                   <p className="max-w-2xl mx-auto text-lg text-blue-100 mb-10">Whether you're a developer, a healthcare professional, or a potential partner, your contribution can make a difference. Let's build a safer, more transparent world together.</p>
-                  <a href="#" className="bg-white text-blue-600 font-semibold px-8 py-3.5 rounded-lg text-base hover:bg-opacity-90 transition-all duration-300 inline-block shadow-lg">Join our Discord Community</a>
+                  <Link to="/connect" className="bg-white text-blue-600 font-semibold px-8 py-3.5 rounded-lg text-base hover:bg-opacity-90 transition-all duration-300 inline-block shadow-lg">Get Started</Link>
                 </div>
               </div>
             </div>
