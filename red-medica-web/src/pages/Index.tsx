@@ -546,7 +546,7 @@ const Index = () => {
                 <div className="feature-card text-center p-8 rounded-xl">
                   <div className="flex items-center justify-center h-16 w-16 rounded-full bg-white text-blue-600 mx-auto mb-4 border-2 border-blue-200"><svg className="h-8 w-8" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z" /></svg></div>
                   <h3 className="text-xl font-bold text-gray-900 mb-2">Blockchain Integrity</h3>
-                  <p className="text-gray-600 text-sm">Powered by Polygon for low-cost, high-speed transactions, ensuring every record is immutable.</p>
+                  <p className="text-gray-600 text-sm">Powered by Polkadot for robust security and interoperability, ensuring every record is immutable.</p>
                 </div>
                 <div className="feature-card text-center p-8 rounded-xl">
                   <div className="flex items-center justify-center h-16 w-16 rounded-full bg-white text-blue-600 mx-auto mb-4 border-2 border-blue-200"><svg className="h-8 w-8" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 18h.01M8 21h8a2 2 0 002-2V5a2 2 0 00-2-2H8a2 2 0 00-2 2v14a2 2 0 002 2z" /></svg></div>
@@ -578,7 +578,7 @@ const Index = () => {
               <div className="text-center">
                 <h3 className="text-sm font-semibold text-gray-500 uppercase tracking-wider mb-8">Powered By Enterprise-Grade Technology</h3>
                 <div className="flex flex-wrap justify-center items-center gap-x-8 gap-y-6 max-w-4xl mx-auto">
-                  <div className="flex items-center gap-3 text-gray-500" title="Polygon"><img src="https://www.vectorlogo.zone/logos/polygon/polygon-icon.svg" className="h-7 w-7" alt="Polygon" /> Polygon</div>
+                  <div className="flex items-center gap-3 text-gray-500" title="Polkadot"><img src="https://www.vectorlogo.zone/logos/polkadot/polkadot-icon.svg" className="h-7 w-7" alt="Polkadot" /> Polkadot</div>
                   <div className="flex items-center gap-3 text-gray-500" title="React"><img src="https://www.vectorlogo.zone/logos/reactjs/reactjs-icon.svg" className="h-7 w-7" alt="React" /> React</div>
                   <div className="flex items-center gap-3 text-gray-500" title="Node.js"><img src="https://www.vectorlogo.zone/logos/nodejs/nodejs-icon.svg" className="h-7 w-7" alt="Node.js" /> Node.js</div>
                   <div className="flex items-center gap-3 text-gray-500" title="Solidity"><img src="https://www.vectorlogo.zone/logos/soliditylang/soliditylang-icon.svg" className="h-7 w-7" alt="Solidity" /> Solidity</div>
