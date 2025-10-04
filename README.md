@@ -1,4 +1,4 @@
-# 🏥 Red Médica
+# Red Médica
 
 <div align="center">
 
