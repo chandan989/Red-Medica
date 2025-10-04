@@ -393,9 +393,11 @@ const Index = () => {
               </p>
               <div className="flex justify-center items-center gap-4 hero-buttons">
                 <Link to="/connect" className="cta-gradient text-white font-semibold px-8 py-3.5 rounded-lg text-base hover:opacity-90 transition-all duration-300 glow">Get Started</Link>
-                <Link to="/verify" className="flex items-center gap-2 text-gray-600 font-medium hover:text-blue-600 transition-colors duration-300">
-                  <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 12l2 2 4-4m0-4a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
-                  <span>Verify Product</span>
+                <Link to="/verify" className="group flex items-center gap-2 rounded-lg border-2 border-blue-600/80 bg-blue-500/10 px-6 py-3 text-sm font-semibold text-blue-600 shadow-sm backdrop-blur-sm transition-all hover:border-blue-600 hover:bg-blue-500/20 hover:shadow-md">
+                   <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 transition-transform group-hover:scale-110" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2">
+                     <path strokeLinecap="round" strokeLinejoin="round" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+                   </svg>
+                    <span>Verify Product</span>
                 </Link>
               </div>
             </div>
@@ -455,12 +457,12 @@ const Index = () => {
                     </ul>
                   </div>
                   <div className="bg-gray-50 rounded-xl p-8 border">
-                    <img src="https://placehold.co/600x400/EFF6FF/1E3A8A?text=Batch+Registration+UI" alt="Product Registration UI" className="rounded-lg shadow-lg border border-gray-200 w-full" />
+                    <img src="/Batch Registration UI.png" alt="Product Registration UI" className="rounded-lg shadow-lg border border-gray-200 w-full" />
                   </div>
                 </div>
                 <div className="grid md:grid-cols-2 gap-10 items-center">
                   <div className="bg-gray-50 rounded-xl p-8 border md:order-last">
-                    <img src="https://placehold.co/600x400/EFF6FF/1E3A8A?text=Live+Tracking+Dashboard" alt="Supply Chain Tracking" className="rounded-lg shadow-lg border border-gray-200 w-full" />
+                    <img src="/Live Tracking Dashboard.png" alt="Supply Chain Tracking" className="rounded-lg shadow-lg border border-gray-200 w-full" />
                   </div>
                   <div>
                     <span className="inline-block bg-blue-100 text-blue-600 font-semibold px-4 py-1 rounded-full mb-4">Step 2</span>
@@ -483,7 +485,7 @@ const Index = () => {
                     </ul>
                   </div>
                   <div className="bg-gray-50 rounded-xl p-8 border">
-                    <img src="https://placehold.co/600x400/EFF6FF/1E3A8A?text=QR+Scan+Result" alt="QR Verification" className="rounded-lg shadow-lg border border-gray-200 w-full" />
+                    <img src="/QR Scan Result.png" alt="QR Verification" className="rounded-lg shadow-lg border border-gray-200 w-full" />
                   </div>
                 </div>
               </div>
@@ -523,10 +525,10 @@ const Index = () => {
                     <p className="text-gray-600 mb-4">Gain ultimate peace of mind. A simple scan of the QR code on your medication's packaging empowers you to confirm its authenticity and see its entire journey, right from your own phone.</p>
                   </div>
                   <div id="tab-image-container">
-                    <img src="https://placehold.co/500x400/EFF6FF/1E3A8A?text=Manufacturers+Dashboard" alt="Manufacturers Dashboard" className="tab-content active rounded-lg shadow-md border border-gray-200" data-tab-img="manufacturers" />
-                    <img src="https://placehold.co/500x400/EFF6FF/1E3A8A?text=Logistics+Tracking" alt="Logistics Tracking" className="tab-content rounded-lg shadow-md border border-gray-200" data-tab-img="distributors" />
-                    <img src="https://placehold.co/500x400/EFF6FF/1E3A8A?text=Hospital+Inventory" alt="Hospital Inventory" className="tab-content rounded-lg shadow-md border border-gray-200" data-tab-img="providers" />
-                    <img src="https://placehold.co/500x400/EFF6FF/1E3A8A?text=Patient+Verification+App" alt="Patient Verification App" className="tab-content rounded-lg shadow-md border border-gray-200" data-tab-img="patients" />
+                    <img src="/Manufacturers Dashboard.png" alt="Manufacturers Dashboard" className="tab-content active rounded-lg shadow-md border border-gray-200" data-tab-img="manufacturers" />
+                    <img src="/Logistics Tracking.png" alt="Logistics Tracking" className="tab-content rounded-lg shadow-md border border-gray-200" data-tab-img="distributors" />
+                    <img src="/Hospital Inventory.png" alt="Hospital Inventory" className="tab-content rounded-lg shadow-md border border-gray-200" data-tab-img="providers" />
+                    <img src="/Patient Verification App.png" alt="Patient Verification App" className="tab-content rounded-lg shadow-md border border-gray-200" data-tab-img="patients" />
                   </div>
                 </div>
               </div>
@@ -616,8 +618,7 @@ const Index = () => {
                 <a href="#features" className="text-gray-600 hover:text-blue-600 transition-colors">Features</a>
               </nav>
               <div className="flex justify-center items-center space-x-6 mb-6">
-                <a href="#" className="text-gray-400 hover:text-blue-600 transition-colors"><svg className="h-5 w-5" fill="currentColor" viewBox="0 0 24 24"><path d="M24 4.557c-.883.392-1.832.656-2.828.775 1.017-.609 1.798-1.574 2.165-2.724-.951.564-2.005.974-3.127 1.195-.897-.957-2.178-1.555-3.594-1.555-3.179 0-5.515 2.966-4.797 6.045-4.091-.205-7.719-2.165-10.148-5.144-1.29 2.213-.669 5.108 1.523 6.574-.806-.026-1.566-.247-2.229-.616v.064c0 2.298 1.634 4.214 3.791 4.649-.57.156-1.173.226-1.793.226-.299 0-.584-.028-.865-.083.632 1.953 2.449 3.377 4.604 3.417-1.77 1.39-3.996 2.215-6.42 2.215-.41 0-.814-.024-1.21-.07 2.288 1.465 5.013 2.32 7.942 2.32 9.49 0 14.689-7.86 14.689-14.689 0-.223-.005-.446-.014-.668.995-.718 1.86-1.62 2.55-2.65z" /></svg></a>
-                <a href="#" className="text-gray-400 hover:text-blue-600 transition-colors"><svg className="h-5 w-5" fill="currentColor" viewBox="0 0 24 24"><path d="M12 0c-6.626 0-12 5.373-12 12 0 5.302 3.438 9.8 8.207 11.387.599.111.793-.261.793-.577v-2.234c-3.338.726-4.033-1.416-4.033-1.416-.546-1.387-1.333-1.756-1.333-1.756-1.089-.745.083-.729.083-.729 1.205.084 1.839 1.237 1.839 1.237 1.07 1.834 2.807 1.304 3.492.997.107-.775.418-1.305.762-1.604-2.665-.305-5.467-1.334-5.467-5.931 0-1.311.469-2.381 1.236-3.221-.124-.303-.535-1.524.117-3.176 0 0 1.008-.322 3.301 1.23.957-.266 1.983-.399 3.003-.404 1.02.005 2.047.138 3.006.404 2.291-1.552 3.297-1.23 3.297-1.23.653 1.653.242 2.874.118 3.176.77.84 1.235 1.911 1.235 3.221 0 4.609-2.807 5.624-5.479 5.921.43.372.823 1.102.823 2.222v3.293c0 .319.192.694.801.576 4.765-1.589 8.199-6.086 8.199-11.386 0-6.627-5.373-12-12-12z" /></svg></a>
+                <a href="https://github.com/nikhlu07/Red-Medica" className="text-gray-400 hover:text-blue-600 transition-colors"><svg className="h-5 w-5" fill="currentColor" viewBox="0 0 24 24"><path d="M12 0c-6.626 0-12 5.373-12 12 0 5.302 3.438 9.8 8.207 11.387.599.111.793-.261.793-.577v-2.234c-3.338.726-4.033-1.416-4.033-1.416-.546-1.387-1.333-1.756-1.333-1.756-1.089-.745.083-.729.083-.729 1.205.084 1.839 1.237 1.839 1.237 1.07 1.834 2.807 1.304 3.492.997.107-.775.418-1.305.762-1.604-2.665-.305-5.467-1.334-5.467-5.931 0-1.311.469-2.381 1.236-3.221-.124-.303-.535-1.524.117-3.176 0 0 1.008-.322 3.301 1.23.957-.266 1.983-.399 3.003-.404 1.02.005 2.047.138 3.006.404 2.291-1.552 3.297-1.23 3.297-1.23.653 1.653.242 2.874.118 3.176.77.84 1.235 1.911 1.235 3.221 0 4.609-2.807 5.624-5.479 5.921.43.372.823 1.102.823 2.222v3.293c0 .319.192.694.801.576 4.765-1.589 8.199-6.086 8.199-11.386 0-6.627-5.373-12-12-12z" /></svg></a>
               </div>
               <p className="text-sm text-gray-500">&copy; 2025 Red Médica. All Rights Reserved.</p>
             </div>

@@ -183,34 +183,42 @@ const Register = () => {
 
           {/* Progress Stepper */}
           <div className="mb-8">
-            <div className="flex items-center justify-between">
-              {[1, 2, 3, 4, 5].map((s) => (
-                <div key={s} className="flex flex-1 items-center">
-                  <div
-                    className={`flex h-10 w-10 items-center justify-center rounded-full border-2 font-semibold ${
-                      s <= step
-                        ? 'cta-gradient border-transparent text-white'
-                        : 'border-gray-300 bg-white text-gray-500'
-                    }`}
-                  >
-                    {s < step ? <CheckCircle2 className="h-5 w-5" /> : s}
-                  </div>
-                  {s < 5 && (
+            <div className="relative flex justify-between">
+              <div
+                className="absolute top-5 left-10 right-10 h-1 bg-gray-300"
+                style={{ transform: 'translateY(-50%)' }}
+              >
+                <div
+                  className="h-1 bg-blue-600"
+                  style={{
+                    width: `${((step - 1) / 4) * 100}%`,
+                    transition: 'width 0.4s ease-in-out',
+                  }}
+                ></div>
+              </div>
+              {[
+                'Basic Info',
+                'Dates',
+                'Details',
+                'Regulatory',
+                'Review',
+              ].map((title, index) => {
+                const s = index + 1;
+                return (
+                  <div key={s} className="z-10 flex flex-col items-center text-center">
                     <div
-                      className={`h-1 flex-1 ${
-                        s < step ? 'bg-blue-600' : 'bg-gray-300'
+                      className={`flex h-10 w-10 flex-shrink-0 items-center justify-center rounded-full border-2 font-semibold transition-colors duration-300 ${
+                        s <= step
+                          ? 'cta-gradient border-transparent text-white'
+                          : 'border-gray-300 bg-white text-gray-500'
                       }`}
-                    />
-                  )}
-                </div>
-              ))}
-            </div>
-            <div className="mt-2 flex justify-between text-xs text-muted-foreground">
-              <span className="text-gray-600">Basic Info</span>
-              <span className="text-gray-600">Dates</span>
-              <span className="text-gray-600">Details</span>
-              <span className="text-gray-600">Regulatory</span>
-              <span className="text-gray-600">Review</span>
+                    >
+                      {s < step ? <CheckCircle2 className="h-5 w-5" /> : s}
+                    </div>
+                    <p className="mt-2 w-20 text-xs text-gray-600">{title}</p>
+                  </div>
+                );
+              })}
             </div>
           </div>
 
@@ -397,28 +405,33 @@ const Register = () => {
                   <div>
                     <Label className="text-gray-700">Target Regions *</Label>
                     <div className="mt-2 space-y-2">
-                      {['North America', 'Europe', 'Asia', 'South America', 'Africa', 'Oceania'].map(
-                        (region) => (
-                          <label key={region} className="flex items-center gap-2 text-gray-800">
-                            <input
-                              type="checkbox"
-                              checked={formData.targetRegions.includes(region)}
-                              onChange={(e) => {
-                                if (e.target.checked) {
-                                  updateField('targetRegions', [...formData.targetRegions, region]);
-                                } else {
-                                  updateField(
-                                    'targetRegions',
-                                    formData.targetRegions.filter((r) => r !== region)
-                                  );
-                                }
-                              }}
-                              className="h-4 w-4 rounded border-gray-300 text-blue-600 focus:ring-blue-500"
-                            />
-                            <span>{region}</span>
-                          </label>
-                        )
-                      )}
+                      {[
+                        'North America',
+                        'Europe',
+                        'Asia',
+                        'South America',
+                        'Africa',
+                        'Oceania',
+                      ].map((region) => (
+                        <label key={region} className="flex items-center gap-2 text-gray-800">
+                          <input
+                            type="checkbox"
+                            checked={formData.targetRegions.includes(region)}
+                            onChange={(e) => {
+                              if (e.target.checked) {
+                                updateField('targetRegions', [...formData.targetRegions, region]);
+                              } else {
+                                updateField(
+                                  'targetRegions',
+                                  formData.targetRegions.filter((r) => r !== region)
+                                );
+                              }
+                            }}
+                            className="h-4 w-4 rounded border-gray-300 text-blue-600 focus:ring-blue-500"
+                          />
+                          <span>{region}</span>
+                        </label>
+                      ))}
                     </div>
                   </div>
                 </div>
