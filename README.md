@@ -2,7 +2,7 @@
 
 <img src="logo.svg" alt="Red Médica Logo" width="200" height="200">
 
-# 🏥 Red Médica
+#  Red Médica
 
 **Building trust in healthcare, one block at a time.**
 
