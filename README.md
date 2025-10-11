@@ -1,19 +1,19 @@
-# Red Médica
-
 <div align="center">
 
-<img src="./logo.svg" alt="Red Médica Logo" width="100" />
+<img src="logo.svg" alt="Red Médica Logo" width="200" height="200">
+
+#  Red Médica
 
 **Building trust in healthcare, one block at a time.**
 
 [![MIT License](https://img.shields.io/badge/License-MIT-green.svg)](https://choosealicense.com/licenses/mit/)
-[![Polkadot](https://img.shields.io/badge/Blockchain-Polkadot-E6007A?logo=polkadot)](https://polkadot.network/)
-[![Firebase](https://img.shields.io/badge/Backend-Firebase-FFCA28?logo=firebase)](https://firebase.google.com/)
+[![Moonbeam](https://img.shields.io/badge/Blockchain-Moonbeam-53CBC9?logo=polkadot)](https://moonbeam.network/)
 [![React](https://img.shields.io/badge/Frontend-React-61DAFB?logo=react)](https://reactjs.org/)
+[![TypeScript](https://img.shields.io/badge/Language-TypeScript-3178C6?logo=typescript)](https://www.typescriptlang.org/)
 [![Substrate](https://img.shields.io/badge/Smart%20Contracts-Ink!-000000)](https://use.ink/)
 [![PRs Welcome](https://img.shields.io/badge/PRs-welcome-brightgreen.svg)](http://makeapullrequest.com)
 
-[Live Demo](https://redmedica.network) • [Documentation](https://docs.redmedica.network) • [Video Walkthrough](https://youtube.com/redmedica) • [Join Discord](https://discord.gg/redmedica)
+**🚀 Live Demo:** [Red Médica Platform](https://github.com/nikhlu07/Red-Medica) • **📋 Contract:** `0xAD6655fa10DB0DDDc079774198E76c457E2e0C8C`
 
 </div>
 
@@ -23,14 +23,18 @@
 
 <div align="center">
 
-### 📱 QR Code Scanning & Verification
-![QR Scan Demo](https://via.placeholder.com/800x450/E6007A/ffffff?text=QR+Code+Scanning+Demo+GIF)
+### 📱 Product Registration & Blockchain Integration
+*4-step registration process with real-time blockchain confirmation*
 
-### 📦 Product Registration Flow
-![Product Registration](https://via.placeholder.com/800x450/FF1864/ffffff?text=Product+Registration+Flow+GIF)
+### � QR dCode Verification System  
+*Instant product verification with complete supply chain history*
 
-### 🚚 Supply Chain Tracking Dashboard
-![Supply Chain Tracking](https://via.placeholder.com/800x450/C0007A/ffffff?text=Supply+Chain+Dashboard+GIF)
+### � Repal-time Dashboard Analytics
+*Live product tracking with demo + real data integration*
+
+**✅ Deployed on Moonbase Alpha Testnet**  
+**✅ MetaMask Integration Ready**  
+**✅ Local Database + Blockchain Sync**
 
 </div>
 
@@ -259,19 +263,17 @@ Built on Polkadot's multi-chain architecture with Firebase's real-time infrastru
 
 ### Technology Stack Deep Dive
 
-#### 🔗 Blockchain Layer (Polkadot Ecosystem)
+#### 🔗 Blockchain Layer (Moonbeam Ecosystem)
 
-| Component | Technology | Purpose | Why? |
-|-----------|-----------|---------|------|
-| **Network** | Rococo/Westend | Testnet deployment | Free testnet tokens, full parachain features |
-| **Production** | Polkadot Relay Chain | Future deployment | Shared security, interoperability |
-| **Smart Contracts** | ink! 4.0 | Wasm-based contracts | Rust safety, efficiency, small binary size |
-| **Pallet Development** | Substrate FRAME | Custom parachain logic | Modular, upgradeable, optimized |
-| **Development** | Cargo Contract | Build & deploy | Official ink! tooling |
-| **Node Template** | Substrate Node | Local development | Full parachain simulation |
-| **Web3 Provider** | Polkadot.js API | Blockchain interaction | Official Polkadot SDK, TypeScript support |
-| **Wallet Integration** | Polkadot.js Extension | User authentication | Most popular Polkadot wallet |
-| **Storage** | IPFS + Pinata | Metadata & documents | Decentralized, permanent |
+| Component | Technology | Purpose | Status |
+|-----------|-----------|---------|--------|
+| **Network** | Moonbase Alpha | Testnet deployment | ✅ **Deployed** |
+| **Contract Address** | `0xAD6655fa10DB0DDDc079774198E76c457E2e0C8C` | Live contract | ✅ **Active** |
+| **Smart Contracts** | ink! 4.0 + Solidity | Wasm + EVM compatibility | ✅ **Implemented** |
+| **Web3 Provider** | Ethers.js | Blockchain interaction | ✅ **Integrated** |
+| **Wallet Integration** | MetaMask | User authentication | ✅ **Working** |
+| **Local Storage** | localStorage + IndexedDB | Offline capability | ✅ **Implemented** |
+| **Real-time Sync** | Custom event system | Live updates | ✅ **Active** |
 
 **Smart Contract Architecture (ink!):**
 
@@ -430,118 +432,159 @@ Firebase Services Architecture:
 #### ⚙️ Project Structure
 
 ```
-red-medica/
-├── substrate-node/              # Substrate parachain node
-│   ├── pallets/
-│   │   └── medical-supply/     # Custom pallet
-│   ├── runtime/
-│   └── node/
-│
-├── ink-contracts/               # Smart contracts
-│   ├── medical_supply_chain/
-│   │   ├── lib.rs
-│   │   ├── Cargo.toml
-│   │   └── tests/
-│   └── scripts/
-│       ├── build.sh
-│       └── deploy.sh
-│
-├── firebase/                    # Firebase configuration
-│   ├── functions/
-│   │   ├── src/
-│   │   │   ├── index.ts
-│   │   │   ├── blockchain.ts
-│   │   │   ├── notifications.ts
-│   │   │   └── qrcode.ts
-│   │   ├── package.json
-│   │   └── tsconfig.json
-│   │
-│   ├── firestore.rules          # Security rules
-│   ├── firestore.indexes.json
-│   ├── storage.rules
-│   └── firebase.json
-│
-├── client/                      # React frontend
+Red-Medica/
+├── red-medica-web/              # React frontend application
 │   ├── src/
-│   │   ├── components/
-│   │   │   ├── common/
-│   │   │   ├── layout/
-│   │   │   ├── product/
-│   │   │   ├── scanner/
-│   │   │   └── dashboard/
-│   │   ├── pages/
-│   │   ├── hooks/
-│   │   │   ├── usePolkadot.js
-│   │   │   ├── useFirebase.js
-│   │   │   └── useAuth.js
-│   │   ├── services/
-│   │   │   ├── firebase.js
-│   │   │   ├── polkadot.js
-│   │   │   └── ipfs.js
-│   │   ├── utils/
-│   │   ├── styles/
-│   │   ├── App.jsx
-│   │   └── main.jsx
-│   ├── public/
-│   ├── package.json
-│   ├── vite.config.js
-│   └── tailwind.config.js
+│   │   ├── components/          # Reusable UI components
+│   │   │   ├── ui/             # Shadcn/ui components
+│   │   │   ├── forms/          # Form validation components
+│   │   │   ├── Navbar.tsx      # Navigation component
+│   │   │   ├── Footer.tsx      # Footer component
+│   │   │   └── QRScanner.tsx   # QR code scanning
+│   │   ├── pages/              # Main application pages
+│   │   │   ├── Dashboard.tsx   # Product analytics dashboard
+│   │   │   ├── Register.tsx    # 4-step product registration
+│   │   │   ├── Verify.tsx      # Product verification
+│   │   │   ├── Connect.tsx     # Wallet connection
+│   │   │   └── Index.tsx       # Landing page
+│   │   ├── hooks/              # Custom React hooks
+│   │   │   ├── useBlockchain.ts # Blockchain interactions
+│   │   │   ├── useWallet.ts    # Wallet management
+│   │   │   └── useQRCode.ts    # QR code utilities
+│   │   ├── services/           # Business logic services
+│   │   │   ├── moonbeam-blockchain.ts # Moonbeam integration
+│   │   │   ├── demo-mode.ts    # Demo data service
+│   │   │   └── errorHandlingService.ts # Error handling
+│   │   ├── lib/                # Utilities and store
+│   │   │   ├── store.ts        # Zustand global state
+│   │   │   └── utils.ts        # Helper functions
+│   │   ├── types/              # TypeScript definitions
+│   │   └── utils/              # Utility functions
+│   ├── public/                 # Static assets
+│   ├── package.json            # Dependencies
+│   ├── vite.config.ts          # Vite configuration
+│   └── tailwind.config.js      # Tailwind CSS config
 │
-├── docs/                        # Documentation
-├── scripts/                     # Deployment scripts
-├── .github/                     # CI/CD workflows
-└── README.md
+├── contracts/                   # Smart contracts
+│   ├── medical_supply_chain/   # ink! contract (Rust)
+│   │   ├── lib.rs              # Main contract logic
+│   │   ├── Cargo.toml          # Rust dependencies
+│   │   └── deployment/         # Deployment configs
+│   └── solidity/               # Solidity contracts (EVM)
+│       ├── contracts/          # Contract source
+│       ├── scripts/            # Deployment scripts
+│       └── artifacts/          # Compiled contracts
+│
+├── scripts/                     # Deployment & utility scripts
+│   ├── deploy-with-private-key.js # Contract deployment
+│   └── view-blockchain-data.js    # Data verification
+│
+├── .kiro/                      # Development specs (excluded from git)
+├── docs/                       # Documentation
+└── README.md                   # This file
 ```
 ---
 
-## 🚀 Complete Installation Guide
+## 🚀 Quick Start Guide
 
 ### Prerequisites Checklist
 
 - [ ] **Node.js v18.x or later** - [Download](https://nodejs.org/)
+- [ ] **Git** - [Download](https://git-scm.com/)
+- [ ] **MetaMask Extension** - [Install](https://metamask.io/)
+- [ ] **Code editor** (VS Code recommended) - [Download](https://code.visualstudio.com/)
+
+### Optional (for contract development):
 - [ ] **Rust & Cargo** - [Install](https://rustup.rs/)
 - [ ] **cargo-contract** - `cargo install cargo-contract --force`
-- [ ] **Git** - [Download](https://git-scm.com/)
-- [ ] **Polkadot.js Extension** - [Install](https://polkadot.js.org/extension/)
-- [ ] **Firebase Account** - [Sign up](https://firebase.google.com/)
-- [ ] **Code editor** (VS Code recommended) - [Download](https://code.visualstudio.com/)
 
 ### Step 1: Clone Repository
 
 ```bash
-git clone https://github.com/your-username/red-medica.git
-cd red-medica
+git clone https://github.com/nikhlu07/Red-Medica.git
+cd Red-Medica
 ```
 
-### Step 2: Setup Firebase Project
-
-#### Create Firebase Project
-
-1. Go to [Firebase Console](https://console.firebase.google.com/)
-2. Click "Add Project"
-3. Name it "Red Médica"
-4. Enable Google Analytics (optional)
-5. Create project
-
-#### Enable Firebase Services
+### Step 2: Install Dependencies
 
 ```bash
-# Install Firebase CLI
-npm install -g firebase-tools
-
-# Login to Firebase
-firebase login
-
-# Initialize Firebase in project
-firebase init
-
-# Select these services:
-# ✓ Firestore
-# ✓ Functions
-# ✓ Hosting
-# ✓ Storage
-# ✓ Emulators
+cd red-medica-web
+npm install
 ```
+
+### Step 3: Environment Setup
+
+Create `.env` file in `red-medica-web/`:
+
+```bash
+# Moonbeam Network Configuration
+VITE_CONTRACT_ADDRESS=0xAD6655fa10DB0DDDc079774198E76c457E2e0C8C
+VITE_NETWORK_RPC=https://rpc.api.moonbase.moonbeam.network
+VITE_CHAIN_ID=1287
+
+# Optional: Custom configuration
+VITE_APP_NAME="Red Médica"
+VITE_APP_VERSION="1.0.0"
+```
+
+### Step 4: Run the Application
+
+```bash
+npm run dev
+```
+
+The application will be available at `http://localhost:5173`
+
+### Step 5: Connect MetaMask
+
+1. **Install MetaMask** browser extension
+2. **Add Moonbase Alpha Network**:
+   - Network Name: `Moonbase Alpha`
+   - RPC URL: `https://rpc.api.moonbase.moonbeam.network`
+   - Chain ID: `1287`
+   - Currency Symbol: `DEV`
+   - Block Explorer: `https://moonbase.moonscan.io/`
+
+3. **Get Test Tokens**: Visit [Moonbase Alpha Faucet](https://apps.moonbeam.network/moonbase-alpha/faucet/)
+
+### Step 6: Start Using Red Médica
+
+1. **Connect Wallet** - Click "Connect" and approve MetaMask connection
+2. **Register Products** - Use the 4-step registration process
+3. **Verify Products** - Scan QR codes or enter Product IDs
+4. **View Dashboard** - Monitor your registered products
+
+---
+
+## 🔧 Development Setup
+
+### Smart Contract Development
+
+### Smart Contract Development
+
+If you want to modify or deploy your own contracts:
+
+```bash
+cd contracts/medical_supply_chain
+
+# Build the ink! contract
+cargo contract build --release
+
+# Deploy to Moonbase Alpha
+cargo contract instantiate \
+  --constructor new \
+  --args \
+  --suri //Alice \
+  --url wss://wss.api.moonbase.moonbeam.network
+```
+
+### Local Development Features
+
+- **Hot Reload**: Instant updates during development
+- **Demo Data**: Pre-loaded sample products for testing
+- **Offline Mode**: Works without blockchain connection
+- **Local Storage**: Persistent data across sessions
+- **Error Handling**: Graceful fallbacks for network issues
 
 #### Configure Firestore Security Rules
 
@@ -758,61 +801,71 @@ npm run dev
 
 ## 📚 API Documentation
 
-### Firebase Cloud Functions
+### Blockchain Integration
 
-#### `registerProductOnChain`
-Automatically triggered when product is created in Firestore
+#### Product Registration
+Register a new product on the Moonbeam blockchain:
 
-```javascript
-// Triggered automatically - no direct call needed
-// When you create a product in Firestore, this function:
-// 1. Reads product data
-// 2. Submits extrinsic to Polkadot
-// 3. Updates Firestore with blockchain confirmation
-```
-
-#### `transferCustody`
-HTTP callable function for transferring product custody
-
-```bash
-# Call from frontend
-const transferCustody = httpsCallable(functions, 'transferCustody');
-
-const result = await transferCustody({
-  productId: 'MED-2024-A1B2C3',
-  toAddress: '5FHneW46xGXgs5mUiveU4sbTyGBzmstUspZC92UhjJM694ty',
-  location: 'Mumbai Warehouse',
-  conditions: {
-    temperature: 5.2,
-    humidity: 42
-  }
+```typescript
+const result = await registerProduct({
+  name: "Amoxicillin 500mg",
+  batchNumber: "BATCH-001", 
+  manufacturerName: "PharmaCorp Ltd",
+  quantity: 10000,
+  mfgDate: new Date("2024-01-15"),
+  expiryDate: new Date("2026-01-15"),
+  category: "Antibiotics"
 });
+
+// Returns:
+{
+  success: true,
+  productId: 12345,
+  txHash: "0x1234567890abcdef...",
+  message: "Product registered successfully"
+}
 ```
 
-#### `verifyProduct`
-Public HTTP endpoint for product verification
+#### Product Verification
+Verify a product's authenticity and view its history:
 
-```bash
-curl https://us-central1-red-medica.cloudfunctions.net/verifyProduct?productId=MED-2024-A1B2C3
+```typescript
+const product = await verifyProduct(productId);
 
-Response:
+// Returns:
 {
-  "authentic": true,
-  "product": {
-    "name": "Amoxicillin 500mg",
-    "manufacturer": "PharmaCorp Ltd",
-    "batchNumber": "BATCH-001",
-    "mfgDate": "2024-01-15",
-    "expiryDate": "2026-01-15"
-  },
-  "blockchain": {
-    "blockHash": "0x1234...",
-    "blockNumber": 1234567,
-    "verified": true
-  },
-  "transfers": 4,
-  "currentHolder": "City Pharmacy"
+  id: 12345,
+  name: "Amoxicillin 500mg",
+  batchNumber: "BATCH-001",
+  manufacturerName: "PharmaCorp Ltd",
+  isVerified: true,
+  status: "verified",
+  txHash: "0x1234567890abcdef...",
+  registeredAt: "2024-01-15T10:30:00Z"
 }
+```
+
+#### Local Storage Structure
+Products are stored locally for offline access and performance:
+
+```typescript
+// localStorage key: 'redMedicaProducts'
+[
+  {
+    id: "12345",
+    productId: 12345,
+    name: "Amoxicillin 500mg",
+    batchNumber: "BATCH-001",
+    quantity: 10000,
+    category: "Antibiotics",
+    manufacturerName: "PharmaCorp Ltd",
+    manufacturerAddress: "0x1234...5678",
+    txHash: "0xabcd...ef01",
+    registeredAt: "2024-01-15T10:30:00Z",
+    isVerified: true,
+    blockchainVerified: true
+  }
+]
 ```
 
 #### `sendAlerts`
@@ -982,23 +1035,31 @@ Scheduled function that monitors products and sends alerts
 
 ## 🧪 Testing Guide
 
-### Smart Contract Tests (ink!)
+### Frontend Testing
 
 ```bash
-cd ink-contracts/medical_supply_chain
+cd red-medica-web
+
+# Run all tests
+npm test
+
+# Run tests in watch mode
+npm run test:watch
+
+# Generate coverage report
+npm run test:coverage
+```
+
+### Smart Contract Testing
+
+```bash
+cd contracts/medical_supply_chain
 
 # Run unit tests
 cargo test
 
-# Run with output
-cargo test -- --nocapture
-
-# Test specific function
-cargo test test_register_product
-
-# Generate test coverage
-cargo tarpaulin --out Html
-```
+# Test with output
+carg
 
 **Example Test:**
 

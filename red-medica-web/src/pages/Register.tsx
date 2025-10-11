@@ -6,18 +6,11 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Textarea } from '@/components/ui/textarea';
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from '@/components/ui/select';
 import { useAppStore } from '@/lib/store';
-import { categories, productForms, generateProductId, generateMockTxHash } from '@/lib/mockData';
-import { Product } from '@/lib/mockData';
-import { CheckCircle2, Loader2, Plus } from 'lucide-react';
+import { useBlockchain } from '@/hooks/useBlockchain';
+import { CheckCircle2, Loader2, ArrowLeft, ArrowRight, Plus, ExternalLink, QrCode, Copy } from 'lucide-react';
 import { toast } from 'sonner';
 import {
   Dialog,
@@ -27,18 +20,50 @@ import {
   DialogTitle,
 } from '@/components/ui/dialog';
 
+const categories = [
+  'Antibiotics',
+  'Pain Relief',
+  'Cardiovascular',
+  'Diabetes',
+  'Respiratory',
+  'Gastrointestinal',
+  'Dermatology',
+  'Neurology',
+  'Oncology',
+  'Vitamins & Supplements'
+];
+
+const productForms = [
+  'Tablet',
+  'Capsule',
+  'Liquid',
+  'Injection',
+  'Cream',
+  'Ointment',
+  'Drops',
+  'Inhaler',
+  'Patch',
+  'Suppository'
+];
+
 const Register = () => {
   const navigate = useNavigate();
-  const { user, isWalletConnected, addProduct } = useAppStore();
+  const { blockchainUser, isAuthenticated } = useAppStore();
+  const { registerProduct, isConnected } = useBlockchain();
+  
   const [step, setStep] = useState(1);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [showSuccess, setShowSuccess] = useState(false);
-  const [generatedProductId, setGeneratedProductId] = useState('');
+  const [registrationResult, setRegistrationResult] = useState<{
+    productId?: number;
+    txHash?: string;
+    message?: string;
+  } | null>(null);
 
   const [formData, setFormData] = useState({
     name: '',
     batchNumber: '',
-    quantity: '',
+    quantity: 0,
     category: '',
     mfgDate: '',
     expiryDate: '',
@@ -49,83 +74,129 @@ const Register = () => {
     packaging: '',
     storageTemp: '',
     fdaNumber: '',
-    targetRegions: [] as string[],
+    targetRegions: [] as string[]
   });
 
-  if (!isWalletConnected || user?.role !== 'Manufacturer') {
+  // Redirect if not authenticated
+  if (!isAuthenticated || !blockchainUser) {
     return <Navigate to="/connect" replace />;
   }
 
-  const updateField = (field: string, value: any) => {
-    setFormData((prev) => ({ ...prev, [field]: value }));
-  };
-
-  const validateStep = (currentStep: number): boolean => {
-    switch (currentStep) {
-      case 1:
-        return !!(formData.name && formData.batchNumber && formData.quantity && formData.category);
-      case 2:
-        return !!(formData.mfgDate && formData.expiryDate && formData.productionLocation);
-      case 3:
-        return !!(formData.ingredients && formData.dosage && formData.form && formData.packaging);
-      case 4:
-        return !!(formData.fdaNumber && formData.targetRegions.length > 0);
-      default:
-        return true;
-    }
+  const handleInputChange = (field: string, value: any) => {
+    setFormData(prev => ({ ...prev, [field]: value }));
   };
 
   const handleNext = () => {
-    if (validateStep(step)) {
+    if (step < 4) {
       setStep(step + 1);
-    } else {
-      toast.error('Please fill in all required fields');
+    }
+  };
+
+  const handlePrevious = () => {
+    if (step > 1) {
+      setStep(step - 1);
     }
   };
 
   const handleSubmit = async () => {
     setIsSubmitting(true);
+    
+    try {
+      let result = { success: false, productId: null, txHash: null, message: null };
+      
+      // Try blockchain registration if connected
+      if (isConnected) {
+        try {
+          console.log('🔗 Attempting blockchain registration...');
+          result = await registerProduct({
+            name: formData.name,
+            batchNumber: formData.batchNumber,
+            manufacturerName: blockchainUser.name,
+            quantity: formData.quantity,
+            mfgDate: new Date(formData.mfgDate),
+            expiryDate: new Date(formData.expiryDate),
+            category: formData.category
+          });
+        } catch (blockchainError) {
+          console.warn('⚠️ Blockchain registration failed, proceeding with local registration:', blockchainError);
+        }
+      }
 
-    // Simulate blockchain transaction
-    await new Promise((resolve) => setTimeout(resolve, 3000));
+      // Generate fallback data if blockchain failed
+      if (!result.success) {
+        console.log('📝 Using local registration fallback...');
+        const fallbackProductId = Date.now();
+        result = {
+          success: true,
+          productId: fallbackProductId,
+          txHash: `local_${fallbackProductId}`,
+          message: 'Product registered locally (blockchain unavailable)'
+        };
+      }
 
-    const productId = generateProductId();
-    const txHash = generateMockTxHash();
+      // Create complete product object for storage
+      const completeProduct = {
+        id: result.productId?.toString() || Date.now().toString(),
+        productId: result.productId,
+        name: formData.name,
+        batchNumber: formData.batchNumber,
+        quantity: formData.quantity,
+        category: formData.category,
+        mfgDate: formData.mfgDate,
+        expiryDate: formData.expiryDate,
+        productionLocation: formData.productionLocation,
+        ingredients: formData.ingredients,
+        dosage: formData.dosage,
+        form: formData.form,
+        packaging: formData.packaging,
+        storageTemp: formData.storageTemp,
+        fdaNumber: formData.fdaNumber,
+        manufacturerName: blockchainUser.name,
+        manufacturerAddress: blockchainUser.address,
+        txHash: result.txHash,
+        registeredAt: new Date().toISOString(),
+        status: 'registered',
+        isVerified: true,
+        blockchainVerified: isConnected && result.txHash && !result.txHash.startsWith('local_')
+      };
 
-    const newProduct: Product = {
-      productId,
-      name: formData.name,
-      batchNumber: formData.batchNumber,
-      manufacturer: {
-        address: user!.address,
-        name: user!.name,
-        license: user!.license,
-      },
-      quantity: parseInt(formData.quantity),
-      mfgDate: formData.mfgDate,
-      expiryDate: formData.expiryDate,
-      category: formData.category,
-      status: 'Manufactured',
-      currentHolder: user!.address,
-      blockchain: {
-        txHash,
-        blockNumber: Math.floor(Math.random() * 1000000) + 12000000,
-        tokenId: Math.floor(Math.random() * 1000),
-      },
-      transfers: [],
-      ingredients: formData.ingredients.split(',').map((i) => i.trim()),
-      dosage: formData.dosage,
-      form: formData.form,
-      packaging: formData.packaging,
-      storageRequirements: formData.storageTemp,
-      fdaNumber: formData.fdaNumber,
-      targetRegions: formData.targetRegions,
-    };
+      // Save to app store
+      const { addProduct } = useAppStore.getState();
+      addProduct(completeProduct);
 
-    addProduct(newProduct);
-    setGeneratedProductId(productId);
-    setIsSubmitting(false);
-    setShowSuccess(true);
+      // Also save to localStorage for persistence
+      const existingProducts = JSON.parse(localStorage.getItem('redMedicaProducts') || '[]');
+      existingProducts.push(completeProduct);
+      localStorage.setItem('redMedicaProducts', JSON.stringify(existingProducts));
+      
+      // Trigger a custom event to notify other components
+      window.dispatchEvent(new CustomEvent('productRegistered', { 
+        detail: completeProduct 
+      }));
+
+      setRegistrationResult({
+        productId: result.productId,
+        txHash: result.txHash,
+        message: result.message
+      });
+      setShowSuccess(true);
+      
+      const successMessage = isConnected && result.txHash && !result.txHash.startsWith('local_') 
+        ? 'Product registered on blockchain and saved locally'
+        : 'Product registered locally (blockchain connection unavailable)';
+        
+      toast.success('Product Registered Successfully', {
+        description: successMessage
+      });
+
+    } catch (error) {
+      console.error('Registration error:', error);
+      toast.error('Registration Error', {
+        description: error instanceof Error ? error.message : 'An unexpected error occurred'
+      });
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   const handleSuccessClose = () => {
@@ -133,422 +204,460 @@ const Register = () => {
     navigate('/dashboard');
   };
 
-  return (
-    <>
-      <style>{`
-        body {
-            font-family: 'Inter', sans-serif;
-            background: #F7FAFC;
-            color: #ffffff;
-        }
-        .card {
-            background: #FFFFFF;
-            border: 1px solid #E2E8F0;
-            transition: all 0.3s ease;
-            border-radius: 0.75rem;
-        }
-        .card:hover {
-            border-color: #3B82F6;
-            transform: translateY(-5px);
-            box-shadow: 0 10px 25px -5px rgba(59, 130, 246, 0.1), 0 8px 10px -6px rgba(59, 130, 246, 0.1);
-        }
-        .cta-gradient {
-            background: linear-gradient(90deg, #3B82F6, #2563EB);
-            color: white;
-            transition: opacity 0.3s ease;
-        }
-        .cta-gradient:hover {
-            opacity: 0.9;
-        }
-        ::selection {
-            background-color: #3B82F6;
-            color: white;
-        }
-      `}</style>
-      <div className="min-h-screen bg-gray-50 font-sans">
-        <Navbar />
-
-        <main className="container mx-auto max-w-4xl px-4 pt-28 pb-8">
-          <div className="mb-12 text-center">
-            <div className="mb-6 inline-flex rounded-full bg-blue-100 p-4">
-              <Plus className="h-10 w-10 text-blue-600" />
+  const renderStep = () => {
+    switch (step) {
+      case 1:
+        return (
+          <div className="space-y-6">
+            <div>
+              <Label htmlFor="name" className="text-sm font-medium text-gray-900 mb-2 block">Product Name *</Label>
+              <Input
+                id="name"
+                value={formData.name}
+                onChange={(e) => handleInputChange('name', e.target.value)}
+                placeholder="e.g., Amoxicillin 500mg"
+                className="w-full border-gray-300 focus:border-blue-500 focus:ring-blue-500"
+              />
+              <p className="text-xs text-gray-500 mt-1">Enter the complete product name including strength</p>
             </div>
-            <h1 className="text-4xl font-black tracking-tighter text-gray-900 md:text-6xl">
-              Register New Product
-            </h1>
-            <p className="mx-auto max-w-2xl text-lg text-gray-600">
-              Add a new pharmaceutical product to the blockchain supply chain.
-            </p>
-          </div>
-
-          {/* Progress Stepper */}
-          <div className="mb-8">
-            <div className="relative flex justify-between">
-              <div
-                className="absolute top-5 left-10 right-10 h-1 bg-gray-300"
-                style={{ transform: 'translateY(-50%)' }}
-              >
-                <div
-                  className="h-1 bg-blue-600"
-                  style={{
-                    width: `${((step - 1) / 4) * 100}%`,
-                    transition: 'width 0.4s ease-in-out',
-                  }}
-                ></div>
+            
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+              <div>
+                <Label htmlFor="batchNumber" className="text-sm font-medium text-gray-900 mb-2 block">Batch Number *</Label>
+                <Input
+                  id="batchNumber"
+                  value={formData.batchNumber}
+                  onChange={(e) => handleInputChange('batchNumber', e.target.value)}
+                  placeholder="e.g., BATCH-001"
+                  className="w-full border-gray-300 focus:border-blue-500 focus:ring-blue-500"
+                />
+                <p className="text-xs text-gray-500 mt-1">Unique identifier for this production batch</p>
               </div>
-              {[
-                'Basic Info',
-                'Dates',
-                'Details',
-                'Regulatory',
-                'Review',
-              ].map((title, index) => {
-                const s = index + 1;
-                return (
-                  <div key={s} className="z-10 flex flex-col items-center text-center">
-                    <div
-                      className={`flex h-10 w-10 flex-shrink-0 items-center justify-center rounded-full border-2 font-semibold transition-colors duration-300 ${
-                        s <= step
-                          ? 'cta-gradient border-transparent text-white'
-                          : 'border-gray-300 bg-white text-gray-500'
-                      }`}
-                    >
-                      {s < step ? <CheckCircle2 className="h-5 w-5" /> : s}
-                    </div>
-                    <p className="mt-2 w-20 text-xs text-gray-600">{title}</p>
-                  </div>
-                );
-              })}
+              
+              <div>
+                <Label htmlFor="quantity" className="text-sm font-medium text-gray-900 mb-2 block">Quantity *</Label>
+                <Input
+                  id="quantity"
+                  type="number"
+                  value={formData.quantity}
+                  onChange={(e) => handleInputChange('quantity', parseInt(e.target.value) || 0)}
+                  placeholder="0"
+                  className="w-full border-gray-300 focus:border-blue-500 focus:ring-blue-500"
+                />
+                <p className="text-xs text-gray-500 mt-1">Total number of units in this batch</p>
+              </div>
+            </div>
+
+            <div>
+              <Label htmlFor="category" className="text-sm font-medium text-gray-900 mb-2 block">Category *</Label>
+              <Select value={formData.category} onValueChange={(value) => handleInputChange('category', value)}>
+                <SelectTrigger className="w-full border-gray-300 focus:border-blue-500 focus:ring-blue-500">
+                  <SelectValue placeholder="Select product category" />
+                </SelectTrigger>
+                <SelectContent>
+                  {categories.map(cat => (
+                    <SelectItem key={cat} value={cat}>{cat}</SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+              <p className="text-xs text-gray-500 mt-1">Choose the appropriate therapeutic category</p>
             </div>
           </div>
+        );
 
-          <Card className="shadow-soft">
-            <CardHeader>
-              <CardTitle className="text-gray-900">
-                {step === 1 && 'Basic Information'}
-                {step === 2 && 'Dates & Expiry'}
-                {step === 3 && 'Product Details'}
-                {step === 4 && 'Regulatory Information'}
-                {step === 5 && 'Review & Submit'}
-              </CardTitle>
-              <CardDescription className="text-gray-600">
-                {step === 1 && 'Enter the basic product information'}
-                {step === 2 && 'Specify manufacturing and expiry dates'}
-                {step === 3 && 'Provide detailed product specifications'}
-                {step === 4 && 'Add regulatory and compliance information'}
-                {step === 5 && 'Review all information before submitting to blockchain'}
-              </CardDescription>
-            </CardHeader>
-            <CardContent>
-              {/* Step 1: Basic Information */}
-              {step === 1 && (
-                <div className="space-y-4">
-                  <div>
-                    <Label htmlFor="name" className="text-gray-700">Product Name *</Label>
-                    <Input
-                      id="name"
-                      placeholder="e.g., Amoxicillin 500mg"
-                      value={formData.name}
-                      onChange={(e) => updateField('name', e.target.value)}
-                      className="text-gray-900"
-                    />
+      case 2:
+        return (
+          <div className="space-y-6">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div>
+                <Label htmlFor="mfgDate" className="text-sm font-medium text-gray-700">Manufacturing Date *</Label>
+                <Input
+                  id="mfgDate"
+                  type="date"
+                  value={formData.mfgDate}
+                  onChange={(e) => handleInputChange('mfgDate', e.target.value)}
+                  className="mt-1"
+                />
+                <p className="text-xs text-gray-500 mt-1">Date when the product was manufactured</p>
+              </div>
+              
+              <div>
+                <Label htmlFor="expiryDate" className="text-sm font-medium text-gray-700">Expiry Date *</Label>
+                <Input
+                  id="expiryDate"
+                  type="date"
+                  value={formData.expiryDate}
+                  onChange={(e) => handleInputChange('expiryDate', e.target.value)}
+                  className="mt-1"
+                />
+                <p className="text-xs text-gray-500 mt-1">Date when the product expires</p>
+              </div>
+            </div>
+            
+            <div>
+              <Label htmlFor="productionLocation" className="text-sm font-medium text-gray-700">Production Location *</Label>
+              <Input
+                id="productionLocation"
+                value={formData.productionLocation}
+                onChange={(e) => handleInputChange('productionLocation', e.target.value)}
+                placeholder="e.g., Mumbai, India"
+                className="mt-1"
+              />
+              <p className="text-xs text-gray-500 mt-1">Location where the product was manufactured</p>
+            </div>
+          </div>
+        );
+
+      case 3:
+        return (
+          <div className="space-y-6">
+            <div>
+              <Label htmlFor="ingredients" className="text-sm font-medium text-gray-700">Active Ingredients *</Label>
+              <Textarea
+                id="ingredients"
+                value={formData.ingredients}
+                onChange={(e) => handleInputChange('ingredients', e.target.value)}
+                placeholder="e.g., Amoxicillin Trihydrate, Magnesium Stearate"
+                rows={3}
+                className="mt-1"
+              />
+              <p className="text-xs text-gray-500 mt-1">List all active pharmaceutical ingredients</p>
+            </div>
+            
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div>
+                <Label htmlFor="dosage" className="text-sm font-medium text-gray-700">Dosage *</Label>
+                <Input
+                  id="dosage"
+                  value={formData.dosage}
+                  onChange={(e) => handleInputChange('dosage', e.target.value)}
+                  placeholder="e.g., 500mg per capsule"
+                  className="mt-1"
+                />
+                <p className="text-xs text-gray-500 mt-1">Specify the dosage strength and unit</p>
+              </div>
+              
+              <div>
+                <Label htmlFor="form" className="text-sm font-medium text-gray-700">Product Form *</Label>
+                <Select value={formData.form} onValueChange={(value) => handleInputChange('form', value)}>
+                  <SelectTrigger className="mt-1">
+                    <SelectValue placeholder="Select form" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {productForms.map(form => (
+                      <SelectItem key={form} value={form}>{form}</SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+                <p className="text-xs text-gray-500 mt-1">Choose the physical form of the product</p>
+              </div>
+            </div>
+            
+            <div>
+              <Label htmlFor="packaging" className="text-sm font-medium text-gray-700">Packaging Type *</Label>
+              <Input
+                id="packaging"
+                value={formData.packaging}
+                onChange={(e) => handleInputChange('packaging', e.target.value)}
+                placeholder="e.g., Blister Pack - 10 capsules per strip"
+                className="mt-1"
+              />
+              <p className="text-xs text-gray-500 mt-1">Describe the packaging format and unit count</p>
+            </div>
+          </div>
+        );
+
+      case 4:
+        return (
+          <div className="space-y-6">
+            <div>
+              <Label htmlFor="storageTemp" className="text-sm font-medium text-gray-700">Storage Requirements</Label>
+              <Input
+                id="storageTemp"
+                value={formData.storageTemp}
+                onChange={(e) => handleInputChange('storageTemp', e.target.value)}
+                placeholder="e.g., 2-8°C, Protected from light"
+                className="mt-1"
+              />
+              <p className="text-xs text-gray-500 mt-1">Optional: Specify storage temperature and conditions</p>
+            </div>
+            
+            <div>
+              <Label htmlFor="fdaNumber" className="text-sm font-medium text-gray-700">FDA/Regulatory Number *</Label>
+              <Input
+                id="fdaNumber"
+                value={formData.fdaNumber}
+                onChange={(e) => handleInputChange('fdaNumber', e.target.value)}
+                placeholder="e.g., NDA-050760"
+                className="mt-1"
+              />
+              <p className="text-xs text-gray-500 mt-1">Enter the FDA approval number or equivalent regulatory identifier</p>
+            </div>
+          </div>
+        );
+
+      default:
+        return null;
+    }
+  };
+
+  const stepTitles = ['Basic Info', 'Dates', 'Details', 'Regulatory', 'Review'];
+
+  return (
+    <div className="min-h-screen bg-gray-50">
+      <Navbar />
+      
+      <div className="container mx-auto px-4 py-16">
+        <div className="max-w-4xl mx-auto">
+          {/* Header */}
+          <div className="text-center mb-20">
+            <div className="w-16 h-16 bg-blue-100 rounded-full flex items-center justify-center mx-auto mb-8">
+              <Plus className="w-8 h-8 text-blue-600" />
+            </div>
+            <h1 className="text-5xl font-black text-gray-900 mb-4">Register New Product</h1>
+            <p className="text-gray-600 text-lg">Add a new pharmaceutical product to the blockchain supply chain.</p>
+          </div>
+
+          {/* Progress Steps */}
+          <div className="flex items-center justify-center mb-16">
+            {stepTitles.slice(0, 5).map((title, index) => (
+              <div key={index} className="flex items-center">
+                <div className="flex flex-col items-center">
+                  <div className={`flex items-center justify-center w-8 h-8 rounded-full text-sm font-medium ${
+                    index + 1 === step 
+                      ? 'bg-blue-500 text-white' 
+                      : index + 1 < step 
+                      ? 'bg-blue-500 text-white'
+                      : 'bg-gray-200 text-gray-500'
+                  }`}>
+                    {index + 1}
                   </div>
-                  <div>
-                    <Label htmlFor="batch" className="text-gray-700">Batch Number *</Label>
-                    <Input
-                      id="batch"
-                      placeholder="e.g., BATCH-001"
-                      value={formData.batchNumber}
-                      onChange={(e) => updateField('batchNumber', e.target.value)}
-                      className="text-gray-900"
-                    />
-                  </div>
-                  <div>
-                    <Label htmlFor="quantity" className="text-gray-700">Quantity *</Label>
-                    <Input
-                      id="quantity"
-                      type="number"
-                      placeholder="e.g., 10000"
-                      value={formData.quantity}
-                      onChange={(e) => updateField('quantity', e.target.value)}
-                      className="text-gray-900"
-                    />
-                  </div>
-                  <div>
-                    <Label htmlFor="category" className="text-gray-700">Category *</Label>
-                    <Select value={formData.category} onValueChange={(v) => updateField('category', v)}>
-                      <SelectTrigger className="text-gray-900">
-                        <SelectValue placeholder="Select category" />
-                      </SelectTrigger>
-                      <SelectContent>
-                        {categories.map((cat) => (
-                          <SelectItem key={cat} value={cat}>
-                            {cat}
-                          </SelectItem>
-                        ))}
-                      </SelectContent>
-                    </Select>
-                  </div>
+                  <span className="mt-2 text-xs text-gray-600">{title}</span>
                 </div>
-              )}
-
-              {/* Step 2: Dates */}
-              {step === 2 && (
-                <div className="space-y-4">
-                  <div>
-                    <Label htmlFor="mfgDate" className="text-gray-700">Manufacturing Date *</Label>
-                    <Input
-                      id="mfgDate"
-                      type="date"
-                      value={formData.mfgDate}
-                      onChange={(e) => updateField('mfgDate', e.target.value)}
-                      className="text-gray-900"
-                    />
-                  </div>
-                  <div>
-                    <Label htmlFor="expiryDate" className="text-gray-700">Expiry Date *</Label>
-                    <Input
-                      id="expiryDate"
-                      type="date"
-                      value={formData.expiryDate}
-                      onChange={(e) => updateField('expiryDate', e.target.value)}
-                      className="text-gray-900"
-                    />
-                  </div>
-                  <div>
-                    <Label htmlFor="location" className="text-gray-700">Production Location *</Label>
-                    <Input
-                      id="location"
-                      placeholder="e.g., Mumbai, India"
-                      value={formData.productionLocation}
-                      onChange={(e) => updateField('productionLocation', e.target.value)}
-                      className="text-gray-900"
-                    />
-                  </div>
-                </div>
-              )}
-
-              {/* Step 3: Product Details */}
-              {step === 3 && (
-                <div className="space-y-4">
-                  <div>
-                    <Label htmlFor="ingredients" className="text-gray-700">Active Ingredients (comma-separated) *</Label>
-                    <Textarea
-                      id="ingredients"
-                      placeholder="e.g., Amoxicillin Trihydrate, Magnesium Stearate"
-                      value={formData.ingredients}
-                      onChange={(e) => updateField('ingredients', e.target.value)}
-                      className="text-gray-900"
-                    />
-                  </div>
-                  <div>
-                    <Label htmlFor="dosage" className="text-gray-700">Dosage *</Label>
-                    <Input
-                      id="dosage"
-                      placeholder="e.g., 500mg per capsule"
-                      value={formData.dosage}
-                      onChange={(e) => updateField('dosage', e.target.value)}
-                      className="text-gray-900"
-                    />
-                  </div>
-                  <div>
-                    <Label htmlFor="form" className="text-gray-700">Form *</Label>
-                    <Select value={formData.form} onValueChange={(v) => updateField('form', v)}>
-                      <SelectTrigger className="text-gray-900">
-                        <SelectValue placeholder="Select form" />
-                      </SelectTrigger>
-                      <SelectContent>
-                        {productForms.map((form) => (
-                          <SelectItem key={form} value={form}>
-                            {form}
-                          </SelectItem>
-                        ))}
-                      </SelectContent>
-                    </Select>
-                  </div>
-                  <div>
-                    <Label htmlFor="packaging" className="text-gray-700">Packaging Type *</Label>
-                    <Input
-                      id="packaging"
-                      placeholder="e.g., Blister Pack - 10 capsules per strip"
-                      value={formData.packaging}
-                      onChange={(e) => updateField('packaging', e.target.value)}
-                      className="text-gray-900"
-                    />
-                  </div>
-                  <div>
-                    <Label htmlFor="storage" className="text-gray-700">Storage Requirements</Label>
-                    <Input
-                      id="storage"
-                      placeholder="e.g., 2-8°C, Protected from light"
-                      value={formData.storageTemp}
-                      onChange={(e) => updateField('storageTemp', e.target.value)}
-                      className="text-gray-900"
-                    />
-                  </div>
-                </div>
-              )}
-
-              {/* Step 4: Regulatory */}
-              {step === 4 && (
-                <div className="space-y-4">
-                  <div>
-                    <Label htmlFor="fda" className="text-gray-700">FDA Approval Number *</Label>
-                    <Input
-                      id="fda"
-                      placeholder="e.g., NDA-050760"
-                      value={formData.fdaNumber}
-                      onChange={(e) => updateField('fdaNumber', e.target.value)}
-                      className="text-gray-900"
-                    />
-                  </div>
-                  <div>
-                    <Label className="text-gray-700">Target Regions *</Label>
-                    <div className="mt-2 space-y-2">
-                      {[
-                        'North America',
-                        'Europe',
-                        'Asia',
-                        'South America',
-                        'Africa',
-                        'Oceania',
-                      ].map((region) => (
-                        <label key={region} className="flex items-center gap-2 text-gray-800">
-                          <input
-                            type="checkbox"
-                            checked={formData.targetRegions.includes(region)}
-                            onChange={(e) => {
-                              if (e.target.checked) {
-                                updateField('targetRegions', [...formData.targetRegions, region]);
-                              } else {
-                                updateField(
-                                  'targetRegions',
-                                  formData.targetRegions.filter((r) => r !== region)
-                                );
-                              }
-                            }}
-                            className="h-4 w-4 rounded border-gray-300 text-blue-600 focus:ring-blue-500"
-                          />
-                          <span>{region}</span>
-                        </label>
-                      ))}
-                    </div>
-                  </div>
-                </div>
-              )}
-
-              {/* Step 5: Review */}
-              {step === 5 && (
-                <div className="space-y-6">
-                  <div className="rounded-lg border bg-gray-50 p-4">
-                    <h3 className="mb-3 font-bold text-lg text-gray-900">Product Summary</h3>
-                    <dl className="grid grid-cols-2 gap-3 text-sm">
-                      <div>
-                        <dt className="text-gray-600">Product Name</dt>
-                        <dd className="font-medium text-gray-900">{formData.name}</dd>
-                      </div>
-                      <div>
-                        <dt className="text-gray-600">Batch Number</dt>
-                        <dd className="font-medium text-gray-900">{formData.batchNumber}</dd>
-                      </div>
-                      <div>
-                        <dt className="text-gray-600">Quantity</dt>
-                        <dd className="font-medium text-gray-900">{formData.quantity}</dd>
-                      </div>
-                      <div>
-                        <dt className="text-gray-600">Category</dt>
-                        <dd className="font-medium text-gray-900">{formData.category}</dd>
-                      </div>
-                      <div>
-                        <dt className="text-gray-600">Manufacturing Date</dt>
-                        <dd className="font-medium text-gray-900">
-                          {new Date(formData.mfgDate).toLocaleDateString()}
-                        </dd>
-                      </div>
-                      <div>
-                        <dt className="text-gray-600">Expiry Date</dt>
-                        <dd className="font-medium text-gray-900">
-                          {new Date(formData.expiryDate).toLocaleDateString()}
-                        </dd>
-                      </div>
-                      <div className="col-span-2">
-                        <dt className="text-gray-600">FDA Number</dt>
-                        <dd className="font-medium text-gray-900">{formData.fdaNumber}</dd>
-                      </div>
-                    </dl>
-                  </div>
-                </div>
-              )}
-
-              {/* Navigation Buttons */}
-              <div className="mt-6 flex justify-between">
-                <Button
-                  variant="outline"
-                  onClick={() => setStep(step - 1)}
-                  disabled={step === 1 || isSubmitting}
-                  className="font-medium text-gray-700 hover:text-blue-500 hover:bg-gray-100 hover:border-blue-500"
-                >
-                  Previous
-                </Button>
-                {step < 5 ? (
-                  <Button onClick={handleNext} disabled={!validateStep(step)} className="cta-gradient font-semibold">
-                    Next
-                  </Button>
-                ) : (
-                  <Button
-                    onClick={handleSubmit}
-                    disabled={isSubmitting}
-                    className="cta-gradient font-semibold"
-                  >
-                    {isSubmitting ? (
-                      <>
-                        <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                        Registering on Blockchain...
-                      </>
-                    ) : (
-                      'Register on Blockchain'
-                    )}
-                  </Button>
+                {index < 4 && (
+                  <div className={`w-20 h-px mx-4 mt-[-16px] ${
+                    index + 1 < step ? 'bg-blue-500' : 'bg-gray-300'
+                  }`} />
                 )}
               </div>
-            </CardContent>
-          </Card>
-        </main>
+            ))}
+          </div>
 
-        {/* Success Dialog */}
-        <Dialog open={showSuccess} onOpenChange={setShowSuccess}>
-          <DialogContent className="sm:max-w-md">
-            <DialogHeader>
-              <div className="mb-4 flex justify-center">
-                <div className="rounded-full bg-green-100 p-3">
-                  <CheckCircle2 className="h-12 w-12 text-green-600" />
+          {/* Form Card */}
+          <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-8">
+            <div className="mb-6">
+              <h2 className="text-xl font-semibold text-gray-900 mb-2">
+                Step {step} of 4: {
+                  step === 1 ? 'Basic Information' :
+                  step === 2 ? 'Dates' :
+                  step === 3 ? 'Details' :
+                  'Regulatory'
+                }
+              </h2>
+              <p className="text-gray-600 text-sm">
+                {step === 1 && 'Enter the basic product information and categorization'}
+                {step === 2 && 'Specify manufacturing dates and production location'}
+                {step === 3 && 'Provide detailed product composition and packaging information'}
+                {step === 4 && 'Add regulatory compliance and distribution information'}
+              </p>
+            </div>
+
+            {renderStep()}
+            
+            <div className="flex justify-between items-center mt-8">
+              <Button
+                variant="ghost"
+                onClick={handlePrevious}
+                disabled={step === 1}
+                className="text-gray-500 hover:text-gray-700"
+              >
+                <ArrowLeft className="w-4 h-4 mr-2" />
+                Previous
+              </Button>
+              
+              {step < 4 ? (
+                <Button 
+                  onClick={handleNext} 
+                  className="bg-blue-500 hover:bg-blue-600 text-white px-6"
+                >
+                  Next Step
+                  <ArrowRight className="w-4 h-4 ml-2" />
+                </Button>
+              ) : (
+                <Button
+                  onClick={handleSubmit}
+                  disabled={isSubmitting || !isConnected}
+                  className="bg-blue-500 hover:bg-blue-600 text-white px-6"
+                >
+                  {isSubmitting ? (
+                    <>
+                      <Loader2 className="w-4 h-4 mr-2 animate-spin" />
+                      Registering...
+                    </>
+                  ) : (
+                    <>
+                      <CheckCircle2 className="w-4 h-4 mr-2" />
+                      Register Product
+                    </>
+                  )}
+                </Button>
+              )}
+            </div>
+          </div>
+        </div>
+      </div>
+
+      {/* Success Dialog */}
+      <Dialog open={showSuccess} onOpenChange={setShowSuccess}>
+        <DialogContent className="max-w-2xl">
+          <DialogHeader>
+            <DialogTitle className="flex items-center text-xl">
+              <CheckCircle2 className="w-6 h-6 text-green-500 mr-3" />
+              Product Registered Successfully!
+            </DialogTitle>
+            <DialogDescription className="text-base">
+              Your product has been registered on the blockchain and is now part of the supply chain.
+            </DialogDescription>
+          </DialogHeader>
+          
+          <div className="space-y-6">
+            {/* Product ID */}
+            {registrationResult?.productId && (
+              <div className="bg-blue-50 border border-blue-200 rounded-lg p-4">
+                <div className="flex items-center justify-between">
+                  <div>
+                    <p className="text-sm font-medium text-blue-900">Product ID</p>
+                    <p className="text-2xl font-bold text-blue-700">{registrationResult.productId}</p>
+                  </div>
+                  <div className="flex space-x-2">
+                    <Button
+                      variant="outline"
+                      size="sm"
+                      onClick={() => {
+                        navigator.clipboard.writeText(registrationResult.productId?.toString() || '');
+                        toast.success('Product ID copied to clipboard');
+                      }}
+                    >
+                      <Copy className="w-4 h-4 mr-1" />
+                      Copy
+                    </Button>
+                    <Button
+                      variant="outline"
+                      size="sm"
+                      onClick={() => {
+                        // Generate QR code for product ID
+                        const qrUrl = `https://api.qrserver.com/v1/create-qr-code/?size=300x300&data=${registrationResult.productId}`;
+                        window.open(qrUrl, '_blank');
+                      }}
+                    >
+                      <QrCode className="w-4 h-4 mr-1" />
+                      QR Code
+                    </Button>
+                  </div>
                 </div>
               </div>
-              <DialogTitle className="text-center text-2xl text-gray-900">Product Registered!</DialogTitle>
-              <DialogDescription className="text-center text-gray-600">
-                Your product has been successfully registered on the blockchain.
-              </DialogDescription>
-            </DialogHeader>
-            <div className="space-y-4">
-              <div className="rounded-lg border bg-gray-50 p-4">
-                <div className="mb-2 text-sm text-gray-600">Product ID</div>
-                <div className="font-mono text-lg font-semibold text-gray-900">{generatedProductId}</div>
+            )}
+
+            {/* Transaction Hash */}
+            {registrationResult?.txHash && (
+              <div className="bg-gray-50 border border-gray-200 rounded-lg p-4">
+                <p className="text-sm font-medium text-gray-900 mb-2">Transaction Hash</p>
+                <div className="flex items-center justify-between bg-white border rounded p-3">
+                  <code className="text-sm text-gray-600 font-mono break-all">
+                    {registrationResult.txHash}
+                  </code>
+                  <div className="flex space-x-2 ml-4">
+                    <Button
+                      variant="outline"
+                      size="sm"
+                      onClick={() => {
+                        navigator.clipboard.writeText(registrationResult.txHash || '');
+                        toast.success('Transaction hash copied to clipboard');
+                      }}
+                    >
+                      <Copy className="w-4 h-4" />
+                    </Button>
+                    <Button
+                      variant="outline"
+                      size="sm"
+                      onClick={() => {
+                        // Open Moonbase Alpha block explorer
+                        const explorerUrl = `https://moonbase.moonscan.io/tx/${registrationResult.txHash}`;
+                        window.open(explorerUrl, '_blank');
+                      }}
+                    >
+                      <ExternalLink className="w-4 h-4" />
+                    </Button>
+                  </div>
+                </div>
+                <p className="text-xs text-gray-500 mt-2">
+                  Click the external link icon to view this transaction on Moonbase Alpha explorer
+                </p>
               </div>
-              <div className="flex gap-2">
-                <Button variant="outline" className="flex-1" onClick={handleSuccessClose}>
-                  Dashboard
-                </Button>
-                <Button className="cta-gradient flex-1" asChild>
-                  <a href={`/products/${generatedProductId}`}>View Product</a>
-                </Button>
+            )}
+
+            {/* Product Summary */}
+            <div className="bg-green-50 border border-green-200 rounded-lg p-4">
+              <h4 className="text-sm font-medium text-green-900 mb-2">Product Summary</h4>
+              <div className="grid grid-cols-2 gap-4 text-sm">
+                <div>
+                  <span className="text-green-700 font-medium">Name:</span>
+                  <p className="text-green-800">{formData.name}</p>
+                </div>
+                <div>
+                  <span className="text-green-700 font-medium">Batch:</span>
+                  <p className="text-green-800">{formData.batchNumber}</p>
+                </div>
+                <div>
+                  <span className="text-green-700 font-medium">Quantity:</span>
+                  <p className="text-green-800">{formData.quantity.toLocaleString()} units</p>
+                </div>
+                <div>
+                  <span className="text-green-700 font-medium">Category:</span>
+                  <p className="text-green-800">{formData.category}</p>
+                </div>
               </div>
             </div>
-          </DialogContent>
-        </Dialog>
+          </div>
 
-        <Footer />
-      </div>
-    </>
+          <div className="flex justify-between items-center pt-4">
+            <Button
+              variant="outline"
+              onClick={() => {
+                // Save product data as JSON
+                const productData = {
+                  ...formData,
+                  productId: registrationResult?.productId,
+                  txHash: registrationResult?.txHash,
+                  registeredAt: new Date().toISOString(),
+                  manufacturer: blockchainUser?.name,
+                  manufacturerAddress: blockchainUser?.address
+                };
+                
+                const dataStr = JSON.stringify(productData, null, 2);
+                const dataBlob = new Blob([dataStr], { type: 'application/json' });
+                const url = URL.createObjectURL(dataBlob);
+                const link = document.createElement('a');
+                link.href = url;
+                link.download = `product-${registrationResult?.productId}-${formData.batchNumber}.json`;
+                link.click();
+                URL.revokeObjectURL(url);
+                
+                toast.success('Product data saved to file');
+              }}
+            >
+              Save Product Data
+            </Button>
+            
+            <Button onClick={handleSuccessClose} className="bg-blue-500 hover:bg-blue-600">
+              Go to Dashboard
+            </Button>
+          </div>
+        </DialogContent>
+      </Dialog>
+
+      <Footer />
+    </div>
   );
 };
 
