@@ -1,9 +1,12 @@
+import { useState } from 'react';
 import { Navbar } from '@/components/Navbar';
 import { Footer } from '@/components/Footer';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { useAppStore } from '@/lib/store';
-import { TrendingUp, TrendingDown, Activity, AlertTriangle } from 'lucide-react';
+import { TrendingUp, TrendingDown, Activity, AlertTriangle, Zap } from 'lucide-react';
 import { StatsCounter } from '@/components/StatsCounter';
+import { PerformanceDashboard } from '@/components/PerformanceDashboard';
 
 const Analytics = () => {
   const { products } = useAppStore();
@@ -118,6 +121,21 @@ const Analytics = () => {
               Real-time insights and metrics from the supply chain.
             </p>
           </div>
+
+          {/* Analytics Tabs */}
+          <Tabs defaultValue="supply-chain" className="space-y-6">
+            <TabsList className="grid w-full grid-cols-2">
+              <TabsTrigger value="supply-chain" className="flex items-center gap-2">
+                <Activity className="h-4 w-4" />
+                Supply Chain
+              </TabsTrigger>
+              <TabsTrigger value="performance" className="flex items-center gap-2">
+                <Zap className="h-4 w-4" />
+                Performance
+              </TabsTrigger>
+            </TabsList>
+
+            <TabsContent value="supply-chain" className="space-y-8">
 
           {/* Overview Cards */}
           <div className="mb-8 grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
@@ -306,40 +324,46 @@ const Analytics = () => {
             </Card>
           </div>
 
-          {/* Recent Alerts */}
-          <Card>
-            <CardHeader>
-              <CardTitle className="text-xl font-bold">Recent Alerts</CardTitle>
-              <CardDescription className="text-gray-600">Real-time system notifications and events</CardDescription>
-            </CardHeader>
-            <CardContent>
-              <div className="space-y-4">
-                {recentAlerts.map((alert) => (
-                  <div key={alert.id} className="flex items-start gap-4 border-b border-gray-200 pb-4 last:border-0">
-                    <div
-                      className={`rounded-full p-2 ${
-                        alert.type === 'warning'
-                          ? 'bg-yellow-100 text-yellow-600'
-                          : alert.type === 'success'
-                          ? 'bg-green-100 text-green-600'
-                          : 'bg-blue-100 text-blue-600'
-                      }`}
-                    >
-                      {alert.type === 'warning' ? (
-                        <AlertTriangle className="h-4 w-4" />
-                      ) : (
-                        <Activity className="h-4 w-4" />
-                      )}
+            {/* Recent Alerts */}
+            <Card>
+              <CardHeader>
+                <CardTitle className="text-xl font-bold">Recent Alerts</CardTitle>
+                <CardDescription className="text-gray-600">Real-time system notifications and events</CardDescription>
+              </CardHeader>
+              <CardContent>
+                <div className="space-y-4">
+                  {recentAlerts.map((alert) => (
+                    <div key={alert.id} className="flex items-start gap-4 border-b border-gray-200 pb-4 last:border-0">
+                      <div
+                        className={`rounded-full p-2 ${
+                          alert.type === 'warning'
+                            ? 'bg-yellow-100 text-yellow-600'
+                            : alert.type === 'success'
+                            ? 'bg-green-100 text-green-600'
+                            : 'bg-blue-100 text-blue-600'
+                        }`}
+                      >
+                        {alert.type === 'warning' ? (
+                          <AlertTriangle className="h-4 w-4" />
+                        ) : (
+                          <Activity className="h-4 w-4" />
+                        )}
+                      </div>
+                      <div className="flex-1">
+                        <p className="font-medium text-gray-800">{alert.message}</p>
+                        <p className="text-xs text-gray-600">{alert.time}</p>
+                      </div>
                     </div>
-                    <div className="flex-1">
-                      <p className="font-medium text-gray-800">{alert.message}</p>
-                      <p className="text-xs text-gray-600">{alert.time}</p>
-                    </div>
-                  </div>
-                ))}
-              </div>
-            </CardContent>
-          </Card>
+                  ))}
+                </div>
+              </CardContent>
+            </Card>
+            </TabsContent>
+
+            <TabsContent value="performance">
+              <PerformanceDashboard />
+            </TabsContent>
+          </Tabs>
         </main>
 
         <Footer />

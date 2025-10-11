@@ -5,37 +5,81 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
 import { Button } from '@/components/ui/button';
-import { Search, BookOpen, MessageCircle, Mail, Play } from 'lucide-react';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import { Badge } from '@/components/ui/badge';
+import { Search, BookOpen, MessageCircle, Mail, Play, Video, HelpCircle, Settings, Users, FileText, Lightbulb } from 'lucide-react';
 import {
   Accordion,
   AccordionContent,
   AccordionItem,
   AccordionTrigger,
 } from '@/components/ui/accordion';
+import { VideoTutorials } from '@/components/VideoTutorials';
+import { HelpTooltip } from '@/components/HelpTooltip';
+import { useAppStore } from '@/lib/store';
+import { useOnboarding } from '@/components/OnboardingFlow';
 
 const Help = () => {
   const [searchQuery, setSearchQuery] = useState('');
+  const [activeTab, setActiveTab] = useState('faq');
+  const { preferences, updatePreferences } = useAppStore();
+  const { startOnboarding } = useOnboarding();
 
   const quickStartGuides = [
     {
       title: 'Manufacturer Quick Start',
       description: 'Learn how to register products and manage your supply chain',
       duration: '5 min read',
+      icon: <Users className="h-5 w-5" />,
+      color: 'bg-blue-100 text-blue-600',
     },
     {
       title: 'Distributor Guide',
       description: 'Accept shipments and transfer custody efficiently',
       duration: '4 min read',
+      icon: <Users className="h-5 w-5" />,
+      color: 'bg-green-100 text-green-600',
     },
     {
       title: 'Pharmacy Setup',
       description: 'Set up your pharmacy and start verifying products',
       duration: '3 min read',
+      icon: <Users className="h-5 w-5" />,
+      color: 'bg-orange-100 text-orange-600',
     },
     {
       title: 'Patient Verification',
       description: 'How to verify medicine authenticity using QR codes',
       duration: '2 min read',
+      icon: <Users className="h-5 w-5" />,
+      color: 'bg-purple-100 text-purple-600',
+    },
+  ];
+
+  const helpSettings = [
+    {
+      title: 'Show Tooltips',
+      description: 'Display helpful tooltips throughout the interface',
+      enabled: preferences.help.tooltipsEnabled,
+      onChange: (enabled: boolean) => updatePreferences({
+        help: { ...preferences.help, tooltipsEnabled: enabled }
+      }),
+    },
+    {
+      title: 'Show Hints',
+      description: 'Display contextual hints and tips',
+      enabled: preferences.help.showHints,
+      onChange: (enabled: boolean) => updatePreferences({
+        help: { ...preferences.help, showHints: enabled }
+      }),
+    },
+    {
+      title: 'Tutorial Mode',
+      description: 'Enable guided tutorials for new features',
+      enabled: preferences.help.tutorialMode,
+      onChange: (enabled: boolean) => updatePreferences({
+        help: { ...preferences.help, tutorialMode: enabled }
+      }),
     },
   ];
 
@@ -144,6 +188,34 @@ const Help = () => {
             <p className="mx-auto max-w-2xl text-lg text-gray-600">
               Everything you need to know about Red Médica
             </p>
+            
+            {/* Quick Actions */}
+            <div className="flex flex-wrap justify-center gap-4 mt-8">
+              <Button
+                onClick={startOnboarding}
+                className="flex items-center gap-2"
+                variant="outline"
+              >
+                <Play className="h-4 w-4" />
+                Start Onboarding Tour
+              </Button>
+              <Button
+                onClick={() => setActiveTab('videos')}
+                className="flex items-center gap-2"
+                variant="outline"
+              >
+                <Video className="h-4 w-4" />
+                Watch Tutorials
+              </Button>
+              <Button
+                onClick={() => setActiveTab('settings')}
+                className="flex items-center gap-2"
+                variant="outline"
+              >
+                <Settings className="h-4 w-4" />
+                Help Settings
+              </Button>
+            </div>
           </div>
 
           {/* Search Bar */}
@@ -163,101 +235,347 @@ const Help = () => {
             </Card>
           </div>
 
-          {/* Content Grid */}
-          <div className="grid gap-8 lg:grid-cols-3">
-            {/* Main Content: FAQ */}
-            <div className="lg:col-span-2">
-              <h2 className="mb-6 text-3xl font-bold text-gray-900">
-                Frequently Asked Questions
-              </h2>
-              <div className="space-y-4">
-                {faqs.map((category, categoryIndex) => (
-                  <Card key={categoryIndex}>
+          {/* Main Content Tabs */}
+          <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
+            <TabsList className="grid w-full grid-cols-5">
+              <TabsTrigger value="faq" className="flex items-center gap-2">
+                <HelpCircle className="h-4 w-4" />
+                FAQ
+              </TabsTrigger>
+              <TabsTrigger value="guides" className="flex items-center gap-2">
+                <FileText className="h-4 w-4" />
+                Guides
+              </TabsTrigger>
+              <TabsTrigger value="videos" className="flex items-center gap-2">
+                <Video className="h-4 w-4" />
+                Videos
+              </TabsTrigger>
+              <TabsTrigger value="tooltips" className="flex items-center gap-2">
+                <Lightbulb className="h-4 w-4" />
+                Tooltips
+              </TabsTrigger>
+              <TabsTrigger value="settings" className="flex items-center gap-2">
+                <Settings className="h-4 w-4" />
+                Settings
+              </TabsTrigger>
+            </TabsList>
+
+            {/* FAQ Tab */}
+            <TabsContent value="faq" className="space-y-6">
+              <div className="grid gap-8 lg:grid-cols-3">
+                {/* Main Content: FAQ */}
+                <div className="lg:col-span-2">
+                  <h2 className="mb-6 text-3xl font-bold text-gray-900">
+                    Frequently Asked Questions
+                  </h2>
+                  <div className="space-y-4">
+                    {faqs.map((category, categoryIndex) => (
+                      <Card key={categoryIndex}>
+                        <CardHeader>
+                          <CardTitle className="text-xl font-bold text-gray-800">{category.category}</CardTitle>
+                        </CardHeader>
+                        <CardContent>
+                          <Accordion type="single" collapsible className="w-full">
+                            {category.questions.map((item, itemIndex) => (
+                              <AccordionItem key={itemIndex} value={`item-${categoryIndex}-${itemIndex}`}>
+                                <AccordionTrigger className="text-left font-medium text-gray-700 hover:text-blue-600">
+                                  {item.q}
+                                </AccordionTrigger>
+                                <AccordionContent className="text-gray-600">
+                                  {item.a}
+                                </AccordionContent>
+                              </AccordionItem>
+                            ))}
+                          </Accordion>
+                        </CardContent>
+                      </Card>
+                    ))}
+                  </div>
+                </div>
+
+                {/* Sidebar: Contact */}
+                <div className="space-y-8">
+                  {/* Contact Support */}
+                  <Card>
                     <CardHeader>
-                      <CardTitle className="text-xl font-bold text-gray-800">{category.category}</CardTitle>
+                      <CardTitle className="text-xl font-bold">Contact Support</CardTitle>
+                      <CardDescription>Can't find an answer? Let us know.</CardDescription>
                     </CardHeader>
-                    <CardContent>
-                      <Accordion type="single" collapsible className="w-full">
-                        {category.questions.map((item, itemIndex) => (
-                          <AccordionItem key={itemIndex} value={`item-${categoryIndex}-${itemIndex}`}>
-                            <AccordionTrigger className="text-left font-medium text-gray-700 hover:text-blue-600">
-                              {item.q}
-                            </AccordionTrigger>
-                            <AccordionContent className="text-gray-600">
-                              {item.a}
-                            </AccordionContent>
-                          </AccordionItem>
-                        ))}
-                      </Accordion>
+                    <CardContent className="space-y-4">
+                      <div>
+                        <Input placeholder="Your Name" />
+                      </div>
+                      <div>
+                        <Input type="email" placeholder="Email Address" />
+                      </div>
+                      <div>
+                        <Textarea placeholder="Describe your issue..." rows={4} />
+                      </div>
+                      <Button className="w-full cta-gradient">
+                        <Mail className="mr-2 h-4 w-4" />
+                        Send Message
+                      </Button>
+                    </CardContent>
+                  </Card>
+                  
+                  {/* Other ways to get help */}
+                  <Card>
+                    <CardHeader>
+                      <CardTitle className="text-xl font-bold">Get in Touch</CardTitle>
+                    </CardHeader>
+                    <CardContent className="space-y-3">
+                      <div className="flex items-center gap-4">
+                        <Mail className="h-5 w-5 text-gray-500" />
+                        <span className="text-gray-700">support@redmedica.com</span>
+                      </div>
+                      <div className="flex items-center gap-4">
+                        <MessageCircle className="h-5 w-5 text-gray-500" />
+                        <span className="text-gray-700">Join our Discord</span>
+                      </div>
+                    </CardContent>
+                  </Card>
+                </div>
+              </div>
+            </TabsContent>
+
+            {/* User Guides Tab */}
+            <TabsContent value="guides" className="space-y-6">
+              <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-4">
+                {quickStartGuides.map((guide, index) => (
+                  <Card key={index} className="group cursor-pointer hover:shadow-lg transition-all duration-300">
+                    <CardContent className="p-6">
+                      <div className={`rounded-full p-3 mb-4 transition-transform group-hover:scale-110 ${guide.color}`}>
+                        {guide.icon}
+                      </div>
+                      <h3 className="font-semibold text-gray-800 mb-2">{guide.title}</h3>
+                      <p className="text-sm text-gray-600 mb-3">{guide.description}</p>
+                      <Badge variant="secondary" className="text-xs">
+                        {guide.duration}
+                      </Badge>
                     </CardContent>
                   </Card>
                 ))}
               </div>
-            </div>
 
-            {/* Sidebar: Quick Start & Contact */}
-            <div className="space-y-8">
-              {/* Quick Start Guides */}
-              <div>
-                <h2 className="mb-6 text-3xl font-bold text-gray-900">Quick Start</h2>
-                <div className="space-y-4">
-                  {quickStartGuides.map((guide, index) => (
-                    <Card key={index} className="group cursor-pointer">
-                      <CardContent className="flex items-center gap-4 p-4">
-                        <div className="rounded-full bg-blue-100 p-3 text-blue-600 transition-transform group-hover:scale-110">
-                          <Play className="h-5 w-5" />
-                        </div>
-                        <div>
-                          <p className="font-semibold text-gray-800">{guide.title}</p>
-                          <p className="text-sm text-gray-600">{guide.duration}</p>
-                        </div>
-                      </CardContent>
-                    </Card>
-                  ))}
-                </div>
+              {/* Detailed Guides */}
+              <div className="grid gap-6 lg:grid-cols-2">
+                <Card>
+                  <CardHeader>
+                    <CardTitle>Getting Started Guide</CardTitle>
+                    <CardDescription>Complete walkthrough for new users</CardDescription>
+                  </CardHeader>
+                  <CardContent className="space-y-4">
+                    <div className="space-y-3">
+                      <div className="flex items-center gap-3 p-3 bg-gray-50 rounded-lg">
+                        <div className="w-6 h-6 bg-blue-600 text-white rounded-full flex items-center justify-center text-xs font-bold">1</div>
+                        <span className="text-sm">Set up your wallet</span>
+                      </div>
+                      <div className="flex items-center gap-3 p-3 bg-gray-50 rounded-lg">
+                        <div className="w-6 h-6 bg-blue-600 text-white rounded-full flex items-center justify-center text-xs font-bold">2</div>
+                        <span className="text-sm">Choose your role</span>
+                      </div>
+                      <div className="flex items-center gap-3 p-3 bg-gray-50 rounded-lg">
+                        <div className="w-6 h-6 bg-blue-600 text-white rounded-full flex items-center justify-center text-xs font-bold">3</div>
+                        <span className="text-sm">Complete your first action</span>
+                      </div>
+                    </div>
+                    <Button className="w-full" onClick={startOnboarding}>
+                      Start Interactive Guide
+                    </Button>
+                  </CardContent>
+                </Card>
+
+                <Card>
+                  <CardHeader>
+                    <CardTitle>Advanced Features</CardTitle>
+                    <CardDescription>Explore powerful capabilities</CardDescription>
+                  </CardHeader>
+                  <CardContent className="space-y-4">
+                    <div className="space-y-3">
+                      <div className="flex items-center gap-3 p-3 bg-gray-50 rounded-lg">
+                        <Badge variant="outline">Advanced</Badge>
+                        <span className="text-sm">Batch QR Generation</span>
+                      </div>
+                      <div className="flex items-center gap-3 p-3 bg-gray-50 rounded-lg">
+                        <Badge variant="outline">Advanced</Badge>
+                        <span className="text-sm">Analytics Dashboard</span>
+                      </div>
+                      <div className="flex items-center gap-3 p-3 bg-gray-50 rounded-lg">
+                        <Badge variant="outline">Advanced</Badge>
+                        <span className="text-sm">API Integration</span>
+                      </div>
+                    </div>
+                    <Button variant="outline" className="w-full">
+                      View Documentation
+                    </Button>
+                  </CardContent>
+                </Card>
+              </div>
+            </TabsContent>
+
+            {/* Video Tutorials Tab */}
+            <TabsContent value="videos" className="space-y-6">
+              <VideoTutorials />
+            </TabsContent>
+
+            {/* Tooltips Demo Tab */}
+            <TabsContent value="tooltips" className="space-y-6">
+              <div className="text-center mb-8">
+                <h2 className="text-3xl font-bold text-gray-900 mb-2">Interactive Help Tooltips</h2>
+                <p className="text-gray-600">Hover over the help icons to see contextual information</p>
               </div>
 
-              {/* Contact Support */}
-              <Card>
-                <CardHeader>
-                  <CardTitle className="text-xl font-bold">Contact Support</CardTitle>
-                  <CardDescription>Can't find an answer? Let us know.</CardDescription>
-                </CardHeader>
-                <CardContent className="space-y-4">
-                  <div>
-                    <Input placeholder="Your Name" />
-                  </div>
-                  <div>
-                    <Input type="email" placeholder="Email Address" />
-                  </div>
-                  <div>
-                    <Textarea placeholder="Describe your issue..." rows={4} />
-                  </div>
-                  <Button className="w-full cta-gradient">
-                    <Mail className="mr-2 h-4 w-4" />
-                    Send Message
-                  </Button>
-                </CardContent>
-              </Card>
-              
-              {/* Other ways to get help */}
-              <Card>
-                <CardHeader>
-                  <CardTitle className="text-xl font-bold">Get in Touch</CardTitle>
-                </CardHeader>
-                <CardContent className="space-y-3">
-                  <div className="flex items-center gap-4">
-                    <Mail className="h-5 w-5 text-gray-500" />
-                    <span className="text-gray-700">support@redmedica.com</span>
-                  </div>
-                  <div className="flex items-center gap-4">
-                    <MessageCircle className="h-5 w-5 text-gray-500" />
-                    <span className="text-gray-700">Join our Discord</span>
-                  </div>
-                </CardContent>
-              </Card>
-            </div>
-          </div>
+              <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
+                <Card>
+                  <CardHeader>
+                    <CardTitle className="flex items-center gap-2">
+                      Wallet Connection
+                      <HelpTooltip
+                        title="Wallet Connection"
+                        content="Connect your MetaMask or Polkadot.js wallet to interact with the blockchain. Your wallet is used to sign transactions and prove your identity."
+                        type="info"
+                      />
+                    </CardTitle>
+                  </CardHeader>
+                  <CardContent>
+                    <p className="text-gray-600">Learn about connecting your digital wallet to Red Médica.</p>
+                  </CardContent>
+                </Card>
+
+                <Card>
+                  <CardHeader>
+                    <CardTitle className="flex items-center gap-2">
+                      QR Code Verification
+                      <HelpTooltip
+                        title="QR Code Verification"
+                        content="Scan the QR code on the product packaging to verify its authenticity. Each QR code is unique and linked to the blockchain record."
+                        type="info"
+                      />
+                    </CardTitle>
+                  </CardHeader>
+                  <CardContent>
+                    <p className="text-gray-600">Understand how QR codes work for product verification.</p>
+                  </CardContent>
+                </Card>
+
+                <Card>
+                  <CardHeader>
+                    <CardTitle className="flex items-center gap-2">
+                      Product Registration
+                      <HelpTooltip
+                        title="Product Registration"
+                        content="Register your products on the blockchain to create an immutable record. This enables supply chain tracking and authenticity verification."
+                        type="info"
+                      />
+                    </CardTitle>
+                  </CardHeader>
+                  <CardContent>
+                    <p className="text-gray-600">Learn the process of registering products on the blockchain.</p>
+                  </CardContent>
+                </Card>
+
+                <Card>
+                  <CardHeader>
+                    <CardTitle className="flex items-center gap-2">
+                      Custody Transfer
+                      <HelpTooltip
+                        title="Custody Transfer"
+                        content="Transfer product custody to the next party in the supply chain. This creates a permanent record of the product's journey."
+                        type="info"
+                      />
+                    </CardTitle>
+                  </CardHeader>
+                  <CardContent>
+                    <p className="text-gray-600">Understand how to transfer product custody in the supply chain.</p>
+                  </CardContent>
+                </Card>
+
+                <Card>
+                  <CardHeader>
+                    <CardTitle className="flex items-center gap-2">
+                      Blockchain Status
+                      <HelpTooltip
+                        title="Blockchain Status"
+                        content="Shows your connection status to the Moonbase Alpha testnet. Green means connected, red means disconnected."
+                        type="info"
+                      />
+                    </CardTitle>
+                  </CardHeader>
+                  <CardContent>
+                    <p className="text-gray-600">Monitor your blockchain connection status.</p>
+                  </CardContent>
+                </Card>
+
+                <Card>
+                  <CardHeader>
+                    <CardTitle className="flex items-center gap-2">
+                      Pro Tips
+                      <HelpTooltip
+                        title="Pro Tip"
+                        content="Always verify products before dispensing to patients. This helps ensure medication safety and builds trust in the supply chain."
+                        type="tip"
+                      />
+                    </CardTitle>
+                  </CardHeader>
+                  <CardContent>
+                    <p className="text-gray-600">Get helpful tips and best practices.</p>
+                  </CardContent>
+                </Card>
+              </div>
+            </TabsContent>
+
+            {/* Help Settings Tab */}
+            <TabsContent value="settings" className="space-y-6">
+              <div className="max-w-2xl mx-auto">
+                <h2 className="text-3xl font-bold text-gray-900 mb-6">Help Settings</h2>
+                
+                <Card>
+                  <CardHeader>
+                    <CardTitle>Customize Your Help Experience</CardTitle>
+                    <CardDescription>
+                      Adjust how help information is displayed throughout the application
+                    </CardDescription>
+                  </CardHeader>
+                  <CardContent className="space-y-6">
+                    {helpSettings.map((setting, index) => (
+                      <div key={index} className="flex items-center justify-between p-4 border rounded-lg">
+                        <div className="flex-1">
+                          <h3 className="font-semibold">{setting.title}</h3>
+                          <p className="text-sm text-gray-600">{setting.description}</p>
+                        </div>
+                        <Button
+                          variant={setting.enabled ? "default" : "outline"}
+                          size="sm"
+                          onClick={() => setting.onChange(!setting.enabled)}
+                        >
+                          {setting.enabled ? "Enabled" : "Disabled"}
+                        </Button>
+                      </div>
+                    ))}
+                    
+                    <div className="border-t pt-6">
+                      <h3 className="font-semibold mb-4">Onboarding</h3>
+                      <div className="space-y-3">
+                        <div className="flex items-center justify-between">
+                          <span className="text-sm">Onboarding Status</span>
+                          <Badge variant={preferences.onboarding.completed ? "default" : "secondary"}>
+                            {preferences.onboarding.completed ? "Completed" : "Not Started"}
+                          </Badge>
+                        </div>
+                        <Button
+                          variant="outline"
+                          onClick={startOnboarding}
+                          className="w-full"
+                        >
+                          {preferences.onboarding.completed ? "Restart Onboarding" : "Start Onboarding"}
+                        </Button>
+                      </div>
+                    </div>
+                  </CardContent>
+                </Card>
+              </div>
+            </TabsContent>
+          </Tabs>
         </main>
 
         <Footer />

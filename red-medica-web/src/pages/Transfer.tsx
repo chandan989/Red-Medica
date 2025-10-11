@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useParams, useNavigate, Navigate } from 'react-router-dom';
 import { Navbar } from '@/components/Navbar';
 import { Footer } from '@/components/Footer';
@@ -15,10 +15,10 @@ import {
   SelectValue,
 } from '@/components/ui/select';
 import { useAppStore } from '@/lib/store';
-import { generateMockTxHash } from '@/lib/mockData';
-import { Transfer as TransferType } from '@/lib/mockData';
-import { ArrowRight, Loader2, CheckCircle2, ArrowLeftRight } from 'lucide-react';
+import { useBlockchain } from '@/hooks/useBlockchain';
+import { ArrowRight, Loader2, CheckCircle2, ArrowLeftRight, AlertCircle, ExternalLink } from 'lucide-react';
 import { toast } from 'sonner';
+import { Alert, AlertDescription } from '@/components/ui/alert';
 import {
   Dialog,
   DialogContent,
@@ -26,34 +26,90 @@ import {
   DialogHeader,
   DialogTitle,
 } from '@/components/ui/dialog';
+import type { Product } from '@/types/blockchain';
 
 const Transfer = () => {
   const { productId } = useParams<{ productId: string }>();
   const navigate = useNavigate();
-  const { getProduct, updateProduct, user } = useAppStore();
-  const product = getProduct(productId!);
-
+  const { blockchainUser, isAuthenticated } = useAppStore();
+  const { verifyProduct, transferCustody, isConnected, networkInfo } = useBlockchain();
+  
+  const [product, setProduct] = useState<Product | null>(null);
+  const [isLoading, setIsLoading] = useState(true);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [showSuccess, setShowSuccess] = useState(false);
-  const [txHash, setTxHash] = useState('');
+  const [transferResult, setTransferResult] = useState<{
+    txHash?: string;
+    message?: string;
+  } | null>(null);
 
   const [formData, setFormData] = useState({
     recipientAddress: '',
-    recipientName: '',
-    recipientRole: '',
-    destination: '',
-    expectedDelivery: '',
-    carrier: '',
-    temperature: '',
-    humidity: '',
-    containerType: '',
-    sealNumber: '',
+    location: '',
     notes: '',
     confirmed: false,
   });
 
+  // Load product details on mount
+  useEffect(() => {
+    const loadProduct = async () => {
+      if (!productId || !isConnected) {
+        setIsLoading(false);
+        return;
+      }
+
+      try {
+        const numericProductId = parseInt(productId);
+        if (isNaN(numericProductId)) {
+          throw new Error('Invalid product ID');
+        }
+
+        const productData = await verifyProduct(numericProductId);
+        if (!productData) {
+          throw new Error('Product not found');
+        }
+
+        setProduct(productData);
+      } catch (error) {
+        console.error('Failed to load product:', error);
+        toast.error('Failed to load product details');
+        navigate('/dashboard');
+      } finally {
+        setIsLoading(false);
+      }
+    };
+
+    loadProduct();
+  }, [productId, isConnected, verifyProduct, navigate]);
+
+  if (!isAuthenticated || !blockchainUser) {
+    return <Navigate to="/connect" replace />;
+  }
+
+  if (blockchainUser.role !== 'manufacturer') {
+    return <Navigate to="/dashboard" replace />;
+  }
+
+  if (isLoading) {
+    return (
+      <div className="min-h-screen bg-gray-50">
+        <Navbar />
+        <main className="container mx-auto max-w-4xl px-4 pt-28 pb-8">
+          <div className="flex items-center justify-center py-20">
+            <div className="text-center">
+              <Loader2 className="h-12 w-12 animate-spin text-blue-600 mx-auto mb-4" />
+              <h2 className="text-xl font-semibold text-gray-900 mb-2">Loading Product</h2>
+              <p className="text-gray-600">Fetching product information...</p>
+            </div>
+          </div>
+        </main>
+        <Footer />
+      </div>
+    );
+  }
+
   if (!product) {
-    return <Navigate to="/dashboard" replace />;;
+    return <Navigate to="/dashboard" replace />;
   }
 
   const updateField = (field: string, value: any) => {
@@ -66,38 +122,52 @@ const Transfer = () => {
       return;
     }
 
+    if (!formData.recipientAddress.trim()) {
+      toast.error('Please enter recipient address');
+      return;
+    }
+
+    if (!formData.location.trim()) {
+      toast.error('Please enter transfer location');
+      return;
+    }
+
+    if (!isConnected) {
+      toast.error('Not connected to blockchain network');
+      return;
+    }
+
     setIsSubmitting(true);
 
-    // Simulate blockchain transaction
-    await new Promise((resolve) => setTimeout(resolve, 3000));
+    try {
+      const result = await transferCustody(
+        product.id,
+        formData.recipientAddress.trim(),
+        formData.location.trim()
+      );
 
-    const hash = generateMockTxHash();
-    setTxHash(hash);
-
-    const newTransfer: TransferType = {
-      from: user!.address,
-      fromName: user!.name,
-      fromRole: user!.role as any,
-      to: formData.recipientAddress,
-      toName: formData.recipientName,
-      toRole: formData.recipientRole as any,
-      timestamp: new Date().toISOString(),
-      location: formData.destination,
-      temperature: parseFloat(formData.temperature),
-      humidity: parseFloat(formData.humidity),
-      verified: true,
-      txHash: hash,
-      notes: formData.notes || undefined,
-    };
-
-    updateProduct(productId!, {
-      currentHolder: formData.recipientAddress,
-      status: 'In Transit',
-      transfers: [...product.transfers, newTransfer],
-    });
-
-    setIsSubmitting(false);
-    setShowSuccess(true);
+      if (result.success) {
+        setTransferResult({
+          txHash: result.txHash,
+          message: result.message
+        });
+        setShowSuccess(true);
+        toast.success('Transfer Successful', {
+          description: result.message || 'Custody has been transferred successfully',
+        });
+      } else {
+        toast.error('Transfer Failed', {
+          description: result.error || 'Failed to transfer custody',
+        });
+      }
+    } catch (error) {
+      console.error('Transfer error:', error);
+      toast.error('Transfer Error', {
+        description: error instanceof Error ? error.message : 'An unexpected error occurred',
+      });
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   return (
@@ -136,6 +206,16 @@ const Transfer = () => {
         <Navbar />
 
         <main className="container mx-auto max-w-4xl px-4 pt-28 pb-8">
+          {/* Network Status Alert */}
+          {!isConnected && (
+            <Alert className="mb-6 border-yellow-200 bg-yellow-50">
+              <AlertCircle className="h-4 w-4 text-yellow-600" />
+              <AlertDescription className="text-yellow-800">
+                <strong>Network Disconnected:</strong> You must be connected to the blockchain network to transfer custody.
+              </AlertDescription>
+            </Alert>
+          )}
+
           <div className="mb-12 text-center">
             <div className="mb-6 inline-flex rounded-full bg-blue-100 p-4">
                 <ArrowLeftRight className="h-10 w-10 text-blue-600" />
@@ -156,6 +236,10 @@ const Transfer = () => {
             <CardContent>
               <dl className="grid grid-cols-2 gap-4 text-sm">
                 <div>
+                  <dt className="font-medium text-gray-600">Product ID</dt>
+                  <dd className="font-semibold text-gray-900">#{product.id}</dd>
+                </div>
+                <div>
                   <dt className="font-medium text-gray-600">Product Name</dt>
                   <dd className="font-semibold text-gray-900">{product.name}</dd>
                 </div>
@@ -164,12 +248,18 @@ const Transfer = () => {
                   <dd className="font-semibold text-gray-900">{product.batchNumber}</dd>
                 </div>
                 <div>
-                  <dt className="font-medium text-gray-600">Current Holder</dt>
-                  <dd className="font-mono text-xs text-gray-800">{user?.name}</dd>
+                  <dt className="font-medium text-gray-600">Category</dt>
+                  <dd className="font-semibold text-gray-900">{product.category}</dd>
                 </div>
                 <div>
-                  <dt className="font-medium text-gray-600">Status</dt>
-                  <dd className="font-semibold text-gray-900">{product.status}</dd>
+                  <dt className="font-medium text-gray-600">Current Holder</dt>
+                  <dd className="font-mono text-xs text-gray-800">
+                    {product.currentHolder.slice(0, 8)}...{product.currentHolder.slice(-8)}
+                  </dd>
+                </div>
+                <div>
+                  <dt className="font-medium text-gray-600">Manufacturer</dt>
+                  <dd className="font-semibold text-gray-900">{product.manufacturerName}</dd>
                 </div>
               </dl>
             </CardContent>
@@ -179,167 +269,88 @@ const Transfer = () => {
           <Card>
             <CardHeader>
               <CardTitle className="text-xl font-bold">Transfer Details</CardTitle>
-              <CardDescription className="text-gray-600">Enter recipient and shipping information</CardDescription>
+              <CardDescription className="text-gray-600">Enter recipient information for blockchain transfer</CardDescription>
             </CardHeader>
-            <CardContent className="space-y-8">
+            <CardContent className="space-y-6">
               {/* Recipient Information */}
               <div className="space-y-4">
                 <h3 className="text-lg font-semibold text-gray-800 border-b pb-2">Recipient Information</h3>
                 <div>
-                  <Label htmlFor="address" className="font-medium text-gray-700">Wallet Address *</Label>
+                  <Label htmlFor="address" className="font-medium text-gray-700">Recipient Wallet Address *</Label>
                   <Input
                     id="address"
-                    placeholder="0x..."
+                    placeholder="Enter the recipient's blockchain wallet address"
                     value={formData.recipientAddress}
                     onChange={(e) => updateField('recipientAddress', e.target.value)}
-                    className="mt-1"
+                    className="mt-1 font-mono text-sm"
                   />
-                </div>
-                <div>
-                  <Label htmlFor="name" className="font-medium text-gray-700">Recipient Name/Organization *</Label>
-                  <Input
-                    id="name"
-                    placeholder="e.g., HealthPlus Pharmacy"
-                    value={formData.recipientName}
-                    onChange={(e) => updateField('recipientName', e.target.value)}
-                    className="mt-1"
-                  />
-                </div>
-                <div>
-                  <Label htmlFor="role" className="font-medium text-gray-700">Recipient Role *</Label>
-                  <Select value={formData.recipientRole} onValueChange={(v) => updateField('recipientRole', v)}>
-                    <SelectTrigger className="mt-1">
-                      <SelectValue placeholder="Select role" />
-                    </SelectTrigger>
-                    <SelectContent>
-                      <SelectItem value="Distributor">Distributor</SelectItem>
-                      <SelectItem value="Pharmacy">Pharmacy</SelectItem>
-                      <SelectItem value="Hospital">Hospital</SelectItem>
-                    </SelectContent>
-                  </Select>
+                  <p className="text-xs text-gray-500 mt-1">
+                    This should be a valid Polkadot/Substrate address
+                  </p>
                 </div>
               </div>
 
-              {/* Shipping Details */}
+              {/* Transfer Details */}
               <div className="space-y-4">
-                <h3 className="text-lg font-semibold text-gray-800 border-b pb-2">Shipping Details</h3>
+                <h3 className="text-lg font-semibold text-gray-800 border-b pb-2">Transfer Details</h3>
                 <div>
-                  <Label htmlFor="destination" className="font-medium text-gray-700">Destination Address *</Label>
+                  <Label htmlFor="location" className="font-medium text-gray-700">Transfer Location *</Label>
                   <Input
-                    id="destination"
+                    id="location"
                     placeholder="e.g., New Delhi, India"
-                    value={formData.destination}
-                    onChange={(e) => updateField('destination', e.target.value)}
+                    value={formData.location}
+                    onChange={(e) => updateField('location', e.target.value)}
                     className="mt-1"
                   />
-                </div>
-                <div>
-                  <Label htmlFor="delivery" className="font-medium text-gray-700">Expected Delivery Date *</Label>
-                  <Input
-                    id="delivery"
-                    type="date"
-                    value={formData.expectedDelivery}
-                    onChange={(e) => updateField('expectedDelivery', e.target.value)}
-                    className="mt-1"
-                  />
-                </div>
-                <div>
-                  <Label htmlFor="carrier" className="font-medium text-gray-700">Carrier/Method</Label>
-                  <Input
-                    id="carrier"
-                    placeholder="e.g., FedEx, DHL"
-                    value={formData.carrier}
-                    onChange={(e) => updateField('carrier', e.target.value)}
-                    className="mt-1"
-                  />
-                </div>
-              </div>
-
-              {/* Storage Conditions */}
-              <div className="space-y-4">
-                <h3 className="text-lg font-semibold text-gray-800 border-b pb-2">Storage Conditions</h3>
-                <div className="grid gap-4 sm:grid-cols-2">
-                  <div>
-                    <Label htmlFor="temp" className="font-medium text-gray-700">Initial Temperature (°C) *</Label>
-                    <Input
-                      id="temp"
-                      type="number"
-                      step="0.1"
-                      placeholder="e.g., 4.5"
-                      value={formData.temperature}
-                      onChange={(e) => updateField('temperature', e.target.value)}
-                      className="mt-1"
-                    />
-                  </div>
-                  <div>
-                    <Label htmlFor="humidity" className="font-medium text-gray-700">Initial Humidity (%) *</Label>
-                    <Input
-                      id="humidity"
-                      type="number"
-                      placeholder="e.g., 45"
-                      value={formData.humidity}
-                      onChange={(e) => updateField('humidity', e.target.value)}
-                      className="mt-1"
-                    />
-                  </div>
-                </div>
-                <div>
-                  <Label htmlFor="container" className="font-medium text-gray-700">Container Type</Label>
-                  <Input
-                    id="container"
-                    placeholder="e.g., Refrigerated Container"
-                    value={formData.containerType}
-                    onChange={(e) => updateField('containerType', e.target.value)}
-                    className="mt-1"
-                  />
-                </div>
-                <div>
-                  <Label htmlFor="seal" className="font-medium text-gray-700">Seal Number</Label>
-                  <Input
-                    id="seal"
-                    placeholder="e.g., SEAL-123456"
-                    value={formData.sealNumber}
-                    onChange={(e) => updateField('sealNumber', e.target.value)}
-                    className="mt-1"
-                  />
+                  <p className="text-xs text-gray-500 mt-1">
+                    Location where the transfer is taking place
+                  </p>
                 </div>
               </div>
 
               {/* Additional Notes */}
               <div>
-                <Label htmlFor="notes" className="font-medium text-gray-700">Additional Notes</Label>
+                <Label htmlFor="notes" className="font-medium text-gray-700">Additional Notes (Optional)</Label>
                 <Textarea
                   id="notes"
                   placeholder="Any additional information about the transfer..."
                   value={formData.notes}
                   onChange={(e) => updateField('notes', e.target.value)}
                   className="mt-1"
+                  rows={3}
                 />
               </div>
 
               {/* Confirmation */}
               <div className="space-y-4 rounded-lg border bg-blue-50 p-4">
                 <h3 className="text-lg font-semibold text-gray-800">Confirmation</h3>
-                <label className="flex items-center gap-3">
+                <label className="flex items-start gap-3">
                   <input
                     type="checkbox"
                     checked={formData.confirmed}
                     onChange={(e) => updateField('confirmed', e.target.checked)}
-                    className="h-5 w-5 rounded border-gray-300 text-blue-600 focus:ring-blue-500"
+                    className="h-5 w-5 rounded border-gray-300 text-blue-600 focus:ring-blue-500 mt-0.5"
                   />
-                  <span className="text-sm text-gray-700">
-                    I confirm that all information is correct and authorize this transfer on the blockchain.
-                  </span>
+                  <div className="text-sm text-gray-700">
+                    <p className="font-medium mb-1">I confirm that:</p>
+                    <ul className="list-disc list-inside space-y-1 text-xs">
+                      <li>All information provided is accurate</li>
+                      <li>I am authorized to transfer this product</li>
+                      <li>The recipient address is correct and verified</li>
+                      <li>This transfer will be recorded permanently on the blockchain</li>
+                    </ul>
+                  </div>
                 </label>
-                <p className="text-xs text-gray-500">
-                  Transfer timestamp: {new Date().toLocaleString()}
-                </p>
+                <div className="text-xs text-gray-500 space-y-1">
+                  <p>Transfer timestamp: {new Date().toLocaleString()}</p>
+                  <p>Network: {networkInfo?.chainName || 'Polkadot Network'}</p>
+                </div>
               </div>
 
               {/* Submit Button */}
               <Button
                 onClick={handleSubmit}
-                disabled={isSubmitting || !formData.confirmed || !formData.recipientAddress}
+                disabled={isSubmitting || !formData.confirmed || !formData.recipientAddress.trim() || !formData.location.trim() || !isConnected}
                 className="w-full cta-gradient font-semibold"
                 size="lg"
               >
@@ -348,10 +359,12 @@ const Transfer = () => {
                     <Loader2 className="mr-2 h-5 w-5 animate-spin" />
                     Processing Transfer on Blockchain...
                   </>
+                ) : !isConnected ? (
+                  'Blockchain Disconnected'
                 ) : (
                   <>
                     <ArrowRight className="mr-2 h-5 w-5" />
-                    Transfer on Blockchain
+                    Transfer Custody on Blockchain
                   </>
                 )}
               </Button>
@@ -374,10 +387,34 @@ const Transfer = () => {
               </DialogDescription>
             </DialogHeader>
             <div className="space-y-4 pt-4">
-              <div className="rounded-lg border bg-gray-100 p-4">
-                <div className="mb-2 text-sm font-medium text-gray-600">Transaction Hash</div>
-                <div className="break-all font-mono text-xs text-gray-800">{txHash}</div>
-              </div>
+              {transferResult?.txHash && (
+                <div className="rounded-lg border bg-gray-100 p-4">
+                  <div className="mb-2 text-sm font-medium text-gray-600">Transaction Hash</div>
+                  <div className="break-all font-mono text-xs text-gray-800 mb-2">
+                    {transferResult.txHash}
+                  </div>
+                  <Button
+                    variant="ghost"
+                    size="sm"
+                    className="h-auto p-0 text-blue-600 hover:text-blue-800"
+                    onClick={() => {
+                      const explorerUrl = `https://moonbase.moonscan.io/tx/${transferResult.txHash}`;
+                      window.open(explorerUrl, '_blank');
+                    }}
+                  >
+                    <ExternalLink className="w-3 h-3 mr-1" />
+                    View on Explorer
+                  </Button>
+                </div>
+              )}
+              
+              {transferResult?.message && (
+                <div className="rounded-lg border bg-blue-50 p-4">
+                  <div className="mb-2 text-sm font-medium text-blue-800">Message</div>
+                  <div className="text-sm text-blue-700">{transferResult.message}</div>
+                </div>
+              )}
+
               <div className="flex gap-4">
                 <Button
                   variant="outline"
