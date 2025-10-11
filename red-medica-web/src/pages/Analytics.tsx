@@ -72,52 +72,19 @@ const Analytics = () => {
 
   return (
     <>
-      <style>{`
-        body {
-            font-family: 'Inter', sans-serif;
-            background: #F7FAFC;
-            color: #ffffff;
-        }
-        .card {
-            background: #FFFFFF;
-            border: 1px solid #E2E8F0;
-            transition: all 0.3s ease;
-            border-radius: 0.75rem;
-        }
-        .card:hover {
-            border-color: #3B82F6;
-            transform: translateY(-5px);
-            box-shadow: 0 10px 25px -5px rgba(59, 130, 246, 0.1), 0 8px 10px -6px rgba(59, 130, 246, 0.1);
-        }
-        .cta-gradient {
-            background: linear-gradient(90deg, #3B82F6, #2563EB);
-            color: white;
-            transition: opacity 0.3s ease;
-        }
-        .cta-gradient:hover {
-            opacity: 0.9;
-        }
-        ::selection {
-            background-color: #3B82F6;
-            color: white;
-        }
-        .table-row-hover:hover {
-          background-color: #F7FAFC;
-        }
-      `}</style>
-      <div className="min-h-screen bg-gray-50 font-sans">
+      <div className="min-h-screen bg-white">
         <Navbar />
 
         <main className="container mx-auto max-w-7xl px-4 pt-28 pb-8">
           {/* Header */}
-          <div className="mb-12 text-center">
-            <div className="mb-6 inline-flex rounded-full bg-blue-100 p-4">
-                <Activity className="h-10 w-10 text-blue-600" />
+          <div className="mb-8 md:mb-12 text-center px-2">
+            <div className="mb-4 md:mb-6 inline-flex rounded-full bg-blue-100 p-3 md:p-4">
+                <Activity className="h-8 w-8 md:h-10 md:w-10 text-blue-600" />
             </div>
-            <h1 className="text-4xl font-black tracking-tighter text-gray-900 md:text-6xl">
+            <h1 className="text-3xl md:text-4xl lg:text-6xl font-black tracking-tighter text-gray-900">
               Analytics
             </h1>
-            <p className="mx-auto max-w-2xl text-lg text-gray-600">
+            <p className="mx-auto mt-2 max-w-2xl text-base md:text-lg text-gray-600 px-4">
               Real-time insights and metrics from the supply chain.
             </p>
           </div>
@@ -139,7 +106,7 @@ const Analytics = () => {
 
           {/* Overview Cards */}
           <div className="mb-8 grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
-            <Card>
+            <Card className="transition-all duration-300 ease-in-out hover:-translate-y-1 hover:shadow-xl hover:border-blue-500/50">
               <CardHeader className="flex flex-row items-center justify-between pb-2">
                 <CardTitle className="text-sm font-medium text-gray-600">Total Products</CardTitle>
                 <Activity className="h-4 w-4 text-gray-400" />
@@ -155,7 +122,7 @@ const Analytics = () => {
               </CardContent>
             </Card>
 
-            <Card>
+            <Card className="transition-all duration-300 ease-in-out hover:-translate-y-1 hover:shadow-xl hover:border-blue-500/50">
               <CardHeader className="flex flex-row items-center justify-between pb-2">
                 <CardTitle className="text-sm font-medium text-gray-600">Active Shipments</CardTitle>
                 <Activity className="h-4 w-4 text-gray-400" />
@@ -170,7 +137,7 @@ const Analytics = () => {
               </CardContent>
             </Card>
 
-            <Card>
+            <Card className="transition-all duration-300 ease-in-out hover:-translate-y-1 hover:shadow-xl hover:border-blue-500/50">
               <CardHeader className="flex flex-row items-center justify-between pb-2">
                 <CardTitle className="text-sm font-medium text-gray-600">Total Verifications</CardTitle>
                 <Activity className="h-4 w-4 text-gray-400" />
@@ -186,7 +153,7 @@ const Analytics = () => {
               </CardContent>
             </Card>
 
-            <Card>
+            <Card className="transition-all duration-300 ease-in-out hover:-translate-y-1 hover:shadow-xl hover:border-blue-500/50">
               <CardHeader className="flex flex-row items-center justify-between pb-2">
                 <CardTitle className="text-sm font-medium text-gray-600">Flagged Products</CardTitle>
                 <AlertTriangle className="h-4 w-4 text-gray-400" />
@@ -206,7 +173,7 @@ const Analytics = () => {
           {/* Charts Row 1 */}
           <div className="mb-8 grid gap-6 lg:grid-cols-2">
             {/* Products by Category */}
-            <Card>
+            <Card className="transition-all duration-300 ease-in-out hover:-translate-y-1 hover:shadow-xl hover:border-blue-500/50">
               <CardHeader>
                 <CardTitle className="text-xl font-bold">Products by Category</CardTitle>
                 <CardDescription className="text-gray-600">Distribution across pharmaceutical categories</CardDescription>
@@ -235,7 +202,7 @@ const Analytics = () => {
             </Card>
 
             {/* Temperature Compliance */}
-            <Card>
+            <Card className="transition-all duration-300 ease-in-out hover:-translate-y-1 hover:shadow-xl hover:border-blue-500/50">
               <CardHeader>
                 <CardTitle className="text-xl font-bold">Temperature Compliance</CardTitle>
                 <CardDescription className="text-gray-600">Storage condition monitoring</CardDescription>
@@ -281,7 +248,7 @@ const Analytics = () => {
 
           {/* Performance Metrics */}
           <div className="mb-8 grid gap-6 lg:grid-cols-3">
-            <Card>
+            <Card className="transition-all duration-300 ease-in-out hover:-translate-y-1 hover:shadow-xl hover:border-blue-500/50">
               <CardHeader>
                 <CardTitle className="text-xl font-bold">Avg. Transit Time</CardTitle>
               </CardHeader>
@@ -295,7 +262,7 @@ const Analytics = () => {
               </CardContent>
             </Card>
 
-            <Card>
+            <Card className="transition-all duration-300 ease-in-out hover:-translate-y-1 hover:shadow-xl hover:border-blue-500/50">
               <CardHeader>
                 <CardTitle className="text-xl font-bold">Counterfeit Detection</CardTitle>
               </CardHeader>
@@ -309,7 +276,7 @@ const Analytics = () => {
               </CardContent>
             </Card>
 
-            <Card>
+            <Card className="transition-all duration-300 ease-in-out hover:-translate-y-1 hover:shadow-xl hover:border-blue-500/50">
               <CardHeader>
                 <CardTitle className="text-xl font-bold">User Satisfaction</CardTitle>
               </CardHeader>
@@ -325,7 +292,7 @@ const Analytics = () => {
           </div>
 
             {/* Recent Alerts */}
-            <Card>
+            <Card className="transition-all duration-300 ease-in-out hover:-translate-y-1 hover:shadow-xl hover:border-blue-500/50">
               <CardHeader>
                 <CardTitle className="text-xl font-bold">Recent Alerts</CardTitle>
                 <CardDescription className="text-gray-600">Real-time system notifications and events</CardDescription>

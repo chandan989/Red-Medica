@@ -17,7 +17,8 @@ import {
   Bar,
   PieChart,
   Pie,
-  Cell
+  Cell,
+  Area
 } from 'recharts';
 import { 
   Activity, 
@@ -44,6 +45,16 @@ interface PerformanceDashboardProps {
 }
 
 const COLORS = ['#0088FE', '#00C49F', '#FFBB28', '#FF8042', '#8884D8'];
+
+const RoundedBar = (props: any) => {
+  const { fill, x, y, width, height } = props;
+  const radius = 6;
+  return (
+    <g>
+      <rect x={x} y={y} width={width} height={height} fill={fill} rx={radius} ry={radius} />
+    </g>
+  );
+};
 
 export const PerformanceDashboard: React.FC<PerformanceDashboardProps> = ({ 
   className = '' 
@@ -239,7 +250,7 @@ export const PerformanceDashboard: React.FC<PerformanceDashboardProps> = ({
 
       {/* Key Metrics Cards */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-        <Card>
+        <Card className="transition-all duration-300 ease-in-out hover:-translate-y-1 hover:shadow-xl hover:border-blue-500/50">
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
             <CardTitle className="text-sm font-medium">Avg Page Load</CardTitle>
             <Clock className="h-4 w-4 text-muted-foreground" />
@@ -254,7 +265,7 @@ export const PerformanceDashboard: React.FC<PerformanceDashboardProps> = ({
           </CardContent>
         </Card>
 
-        <Card>
+        <Card className="transition-all duration-300 ease-in-out hover:-translate-y-1 hover:shadow-xl hover:border-blue-500/50">
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
             <CardTitle className="text-sm font-medium">Transaction Success</CardTitle>
             <CheckCircle className="h-4 w-4 text-muted-foreground" />
@@ -273,7 +284,7 @@ export const PerformanceDashboard: React.FC<PerformanceDashboardProps> = ({
           </CardContent>
         </Card>
 
-        <Card>
+        <Card className="transition-all duration-300 ease-in-out hover:-translate-y-1 hover:shadow-xl hover:border-blue-500/50">
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
             <CardTitle className="text-sm font-medium">User Interactions</CardTitle>
             <Users className="h-4 w-4 text-muted-foreground" />
@@ -288,7 +299,7 @@ export const PerformanceDashboard: React.FC<PerformanceDashboardProps> = ({
           </CardContent>
         </Card>
 
-        <Card>
+        <Card className="transition-all duration-300 ease-in-out hover:-translate-y-1 hover:shadow-xl hover:border-blue-500/50">
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
             <CardTitle className="text-sm font-medium">Error Rate</CardTitle>
             <AlertCircle className="h-4 w-4 text-muted-foreground" />
@@ -314,7 +325,7 @@ export const PerformanceDashboard: React.FC<PerformanceDashboardProps> = ({
         </TabsList>
 
         <TabsContent value="performance" className="space-y-4">
-          <Card>
+          <Card className="transition-all duration-300 ease-in-out hover:-translate-y-1 hover:shadow-xl hover:border-blue-500/50">
             <CardHeader>
               <CardTitle>Page Load Times</CardTitle>
               <CardDescription>
@@ -323,17 +334,33 @@ export const PerformanceDashboard: React.FC<PerformanceDashboardProps> = ({
             </CardHeader>
             <CardContent>
               <ResponsiveContainer width="100%" height={300}>
-                <LineChart data={pageLoadData}>
-                  <CartesianGrid strokeDasharray="3 3" />
-                  <XAxis dataKey="time" />
-                  <YAxis />
-                  <Tooltip />
+                <LineChart data={pageLoadData} margin={{ top: 5, right: 20, left: -10, bottom: 5 }}>
+                  <defs>
+                    <linearGradient id="colorValue" x1="0" y1="0" x2="0" y2="1">
+                      <stop offset="5%" stopColor="#8884d8" stopOpacity={0.8}/>
+                      <stop offset="95%" stopColor="#8884d8" stopOpacity={0}/>
+                    </linearGradient>
+                  </defs>
+                  <CartesianGrid strokeDasharray="3 3" vertical={false} strokeOpacity={0.3} />
+                  <XAxis dataKey="time" axisLine={false} tickLine={false} fontSize={12} />
+                  <YAxis axisLine={false} tickLine={false} fontSize={12} />
+                  <Tooltip
+                    contentStyle={{
+                      backgroundColor: 'rgba(255, 255, 255, 0.8)',
+                      backdropFilter: 'blur(5px)',
+                      border: '1px solid rgba(200, 200, 200, 0.5)',
+                      borderRadius: '0.5rem',
+                      boxShadow: '0 4px 6px rgba(0,0,0,0.1)',
+                    }}
+                  />
                   <Line 
                     type="monotone" 
                     dataKey="value" 
                     stroke="#8884d8" 
                     strokeWidth={2}
+                    dot={false}
                   />
+                  <Area type="monotone" dataKey="value" stroke={false} fillOpacity={1} fill="url(#colorValue)" />
                 </LineChart>
               </ResponsiveContainer>
             </CardContent>
@@ -342,7 +369,7 @@ export const PerformanceDashboard: React.FC<PerformanceDashboardProps> = ({
 
         <TabsContent value="blockchain" className="space-y-4">
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
-            <Card>
+            <Card className="transition-all duration-300 ease-in-out hover:-translate-y-1 hover:shadow-xl hover:border-blue-500/50">
               <CardHeader>
                 <CardTitle>Transaction Times</CardTitle>
                 <CardDescription>
@@ -351,23 +378,39 @@ export const PerformanceDashboard: React.FC<PerformanceDashboardProps> = ({
               </CardHeader>
               <CardContent>
                 <ResponsiveContainer width="100%" height={300}>
-                  <LineChart data={transactionData}>
-                    <CartesianGrid strokeDasharray="3 3" />
-                    <XAxis dataKey="time" />
-                    <YAxis />
-                    <Tooltip />
+                  <LineChart data={transactionData} margin={{ top: 5, right: 20, left: -10, bottom: 5 }}>
+                    <defs>
+                      <linearGradient id="colorDuration" x1="0" y1="0" x2="0" y2="1">
+                        <stop offset="5%" stopColor="#00C49F" stopOpacity={0.8}/>
+                        <stop offset="95%" stopColor="#00C49F" stopOpacity={0}/>
+                      </linearGradient>
+                    </defs>
+                    <CartesianGrid strokeDasharray="3 3" vertical={false} strokeOpacity={0.3} />
+                    <XAxis dataKey="time" axisLine={false} tickLine={false} fontSize={12} />
+                    <YAxis axisLine={false} tickLine={false} fontSize={12} />
+                    <Tooltip
+                      contentStyle={{
+                        backgroundColor: 'rgba(255, 255, 255, 0.8)',
+                        backdropFilter: 'blur(5px)',
+                        border: '1px solid rgba(200, 200, 200, 0.5)',
+                        borderRadius: '0.5rem',
+                        boxShadow: '0 4px 6px rgba(0,0,0,0.1)',
+                      }}
+                    />
                     <Line 
                       type="monotone" 
                       dataKey="duration" 
                       stroke="#00C49F" 
                       strokeWidth={2}
+                      dot={false}
                     />
+                    <Area type="monotone" dataKey="duration" stroke={false} fillOpacity={1} fill="url(#colorDuration)" />
                   </LineChart>
                 </ResponsiveContainer>
               </CardContent>
             </Card>
 
-            <Card>
+            <Card className="transition-all duration-300 ease-in-out hover:-translate-y-1 hover:shadow-xl hover:border-blue-500/50">
               <CardHeader>
                 <CardTitle>Transaction Status</CardTitle>
                 <CardDescription>
@@ -403,7 +446,7 @@ export const PerformanceDashboard: React.FC<PerformanceDashboardProps> = ({
         </TabsContent>
 
         <TabsContent value="interactions" className="space-y-4">
-          <Card>
+          <Card className="transition-all duration-300 ease-in-out hover:-translate-y-1 hover:shadow-xl hover:border-blue-500/50">
             <CardHeader>
               <CardTitle>Most Used Features</CardTitle>
               <CardDescription>
@@ -412,12 +455,27 @@ export const PerformanceDashboard: React.FC<PerformanceDashboardProps> = ({
             </CardHeader>
             <CardContent>
               <ResponsiveContainer width="100%" height={300}>
-                <BarChart data={interactionData}>
-                  <CartesianGrid strokeDasharray="3 3" />
-                  <XAxis dataKey="feature" />
-                  <YAxis />
-                  <Tooltip />
-                  <Bar dataKey="count" fill="#8884d8" />
+                <BarChart data={interactionData} margin={{ top: 5, right: 20, left: -10, bottom: 5 }}>
+                   <defs>
+                    <linearGradient id="colorBar" x1="0" y1="0" x2="0" y2="1">
+                      <stop offset="0%" stopColor="#3B82F6" stopOpacity={0.9}/>
+                      <stop offset="100%" stopColor="#2563EB" stopOpacity={0.8}/>
+                    </linearGradient>
+                  </defs>
+                  <CartesianGrid strokeDasharray="3 3" vertical={false} strokeOpacity={0.3} />
+                  <XAxis dataKey="feature" axisLine={false} tickLine={false} fontSize={12} />
+                  <YAxis axisLine={false} tickLine={false} fontSize={12} />
+                  <Tooltip
+                    cursor={{ fill: 'rgba(147, 197, 253, 0.2)' }}
+                    contentStyle={{
+                      backgroundColor: 'rgba(255, 255, 255, 0.8)',
+                      backdropFilter: 'blur(5px)',
+                      border: '1px solid rgba(200, 200, 200, 0.5)',
+                      borderRadius: '0.5rem',
+                      boxShadow: '0 4px 6px rgba(0,0,0,0.1)',
+                    }}
+                  />
+                  <Bar dataKey="count" fill="url(#colorBar)" shape={<RoundedBar />} />
                 </BarChart>
               </ResponsiveContainer>
             </CardContent>
@@ -426,7 +484,7 @@ export const PerformanceDashboard: React.FC<PerformanceDashboardProps> = ({
 
         <TabsContent value="errors" className="space-y-4">
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
-            <Card>
+            <Card className="transition-all duration-300 ease-in-out hover:-translate-y-1 hover:shadow-xl hover:border-blue-500/50">
               <CardHeader>
                 <CardTitle>Error Distribution</CardTitle>
                 <CardDescription>
@@ -456,7 +514,7 @@ export const PerformanceDashboard: React.FC<PerformanceDashboardProps> = ({
               </CardContent>
             </Card>
 
-            <Card>
+            <Card className="transition-all duration-300 ease-in-out hover:-translate-y-1 hover:shadow-xl hover:border-blue-500/50">
               <CardHeader>
                 <CardTitle>Error Summary</CardTitle>
                 <CardDescription>

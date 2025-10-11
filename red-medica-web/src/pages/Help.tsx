@@ -140,52 +140,19 @@ const Help = () => {
 
   return (
     <>
-      <style>{`
-        body {
-            font-family: 'Inter', sans-serif;
-            background: #F7FAFC;
-            color: #ffffff;
-        }
-        .card {
-            background: #FFFFFF;
-            border: 1px solid #E2E8F0;
-            transition: all 0.3s ease;
-            border-radius: 0.75rem;
-        }
-        .card:hover {
-            border-color: #3B82F6;
-            transform: translateY(-5px);
-            box-shadow: 0 10px 25px -5px rgba(59, 130, 246, 0.1), 0 8px 10px -6px rgba(59, 130, 246, 0.1);
-        }
-        .cta-gradient {
-            background: linear-gradient(90deg, #3B82F6, #2563EB);
-            color: white;
-            transition: opacity 0.3s ease;
-        }
-        .cta-gradient:hover {
-            opacity: 0.9;
-        }
-        ::selection {
-            background-color: #3B82F6;
-            color: white;
-        }
-        .table-row-hover:hover {
-          background-color: #F7FAFC;
-        }
-      `}</style>
-      <div className="min-h-screen bg-gray-50 font-sans">
+      <div className="min-h-screen bg-white">
         <Navbar />
 
         <main className="container mx-auto max-w-7xl px-4 pt-28 pb-8">
           {/* Header */}
-          <div className="mb-12 text-center">
-            <div className="mb-6 inline-flex rounded-full bg-blue-100 p-4">
-              <BookOpen className="h-10 w-10 text-blue-600" />
+          <div className="mb-8 md:mb-12 text-center px-2">
+            <div className="mb-4 md:mb-6 inline-flex rounded-full bg-blue-100 p-3 md:p-4">
+              <BookOpen className="h-8 w-8 md:h-10 md:w-10 text-blue-600" />
             </div>
-            <h1 className="text-4xl font-black tracking-tighter text-gray-900 md:text-6xl">
+            <h1 className="text-3xl md:text-4xl lg:text-6xl font-black tracking-tighter text-gray-900">
               Help & Documentation
             </h1>
-            <p className="mx-auto max-w-2xl text-lg text-gray-600">
+            <p className="mx-auto mt-2 max-w-2xl text-base md:text-lg text-gray-600 px-4">
               Everything you need to know about Red Médica
             </p>
             
@@ -220,7 +187,7 @@ const Help = () => {
 
           {/* Search Bar */}
           <div className="mb-12">
-            <Card>
+            <Card className="transition-all duration-300 ease-in-out hover:-translate-y-1 hover:shadow-xl hover:border-blue-500/50">
               <CardContent className="p-6">
                 <div className="relative">
                   <Search className="absolute left-4 top-1/2 h-5 w-5 -translate-y-1/2 text-gray-400" />
@@ -261,7 +228,7 @@ const Help = () => {
             </TabsList>
 
             {/* FAQ Tab */}
-            <TabsContent value="faq" className="space-y-6">
+            <TabsContent value="faq" className="space-y-6 pt-6">
               <div className="grid gap-8 lg:grid-cols-3">
                 {/* Main Content: FAQ */}
                 <div className="lg:col-span-2">
@@ -270,7 +237,7 @@ const Help = () => {
                   </h2>
                   <div className="space-y-4">
                     {faqs.map((category, categoryIndex) => (
-                      <Card key={categoryIndex}>
+                      <Card key={categoryIndex} className="transition-all duration-300 ease-in-out hover:-translate-y-1 hover:shadow-xl hover:border-blue-500/50">
                         <CardHeader>
                           <CardTitle className="text-xl font-bold text-gray-800">{category.category}</CardTitle>
                         </CardHeader>
@@ -296,7 +263,7 @@ const Help = () => {
                 {/* Sidebar: Contact */}
                 <div className="space-y-8">
                   {/* Contact Support */}
-                  <Card>
+                  <Card className="transition-all duration-300 ease-in-out hover:-translate-y-1 hover:shadow-xl hover:border-blue-500/50">
                     <CardHeader>
                       <CardTitle className="text-xl font-bold">Contact Support</CardTitle>
                       <CardDescription>Can't find an answer? Let us know.</CardDescription>
@@ -311,7 +278,7 @@ const Help = () => {
                       <div>
                         <Textarea placeholder="Describe your issue..." rows={4} />
                       </div>
-                      <Button className="w-full cta-gradient">
+                      <Button className="w-full">
                         <Mail className="mr-2 h-4 w-4" />
                         Send Message
                       </Button>
@@ -319,7 +286,7 @@ const Help = () => {
                   </Card>
                   
                   {/* Other ways to get help */}
-                  <Card>
+                  <Card className="transition-all duration-300 ease-in-out hover:-translate-y-1 hover:shadow-xl hover:border-blue-500/50">
                     <CardHeader>
                       <CardTitle className="text-xl font-bold">Get in Touch</CardTitle>
                     </CardHeader>
@@ -339,10 +306,10 @@ const Help = () => {
             </TabsContent>
 
             {/* User Guides Tab */}
-            <TabsContent value="guides" className="space-y-6">
+            <TabsContent value="guides" className="space-y-6 pt-6">
               <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-4">
                 {quickStartGuides.map((guide, index) => (
-                  <Card key={index} className="group cursor-pointer hover:shadow-lg transition-all duration-300">
+                  <Card key={index} className="group cursor-pointer transition-all duration-300 ease-in-out hover:-translate-y-1 hover:shadow-xl hover:border-blue-500/50">
                     <CardContent className="p-6">
                       <div className={`rounded-full p-3 mb-4 transition-transform group-hover:scale-110 ${guide.color}`}>
                         {guide.icon}
@@ -359,7 +326,7 @@ const Help = () => {
 
               {/* Detailed Guides */}
               <div className="grid gap-6 lg:grid-cols-2">
-                <Card>
+                <Card className="transition-all duration-300 ease-in-out hover:-translate-y-1 hover:shadow-xl hover:border-blue-500/50">
                   <CardHeader>
                     <CardTitle>Getting Started Guide</CardTitle>
                     <CardDescription>Complete walkthrough for new users</CardDescription>
@@ -368,15 +335,15 @@ const Help = () => {
                     <div className="space-y-3">
                       <div className="flex items-center gap-3 p-3 bg-gray-50 rounded-lg">
                         <div className="w-6 h-6 bg-blue-600 text-white rounded-full flex items-center justify-center text-xs font-bold">1</div>
-                        <span className="text-sm">Set up your wallet</span>
+                        <span className="text-sm text-gray-800">Set up your wallet</span>
                       </div>
                       <div className="flex items-center gap-3 p-3 bg-gray-50 rounded-lg">
                         <div className="w-6 h-6 bg-blue-600 text-white rounded-full flex items-center justify-center text-xs font-bold">2</div>
-                        <span className="text-sm">Choose your role</span>
+                        <span className="text-sm text-gray-800">Choose your role</span>
                       </div>
                       <div className="flex items-center gap-3 p-3 bg-gray-50 rounded-lg">
                         <div className="w-6 h-6 bg-blue-600 text-white rounded-full flex items-center justify-center text-xs font-bold">3</div>
-                        <span className="text-sm">Complete your first action</span>
+                        <span className="text-sm text-gray-800">Complete your first action</span>
                       </div>
                     </div>
                     <Button className="w-full" onClick={startOnboarding}>
@@ -385,7 +352,7 @@ const Help = () => {
                   </CardContent>
                 </Card>
 
-                <Card>
+                <Card className="transition-all duration-300 ease-in-out hover:-translate-y-1 hover:shadow-xl hover:border-blue-500/50">
                   <CardHeader>
                     <CardTitle>Advanced Features</CardTitle>
                     <CardDescription>Explore powerful capabilities</CardDescription>
@@ -394,15 +361,15 @@ const Help = () => {
                     <div className="space-y-3">
                       <div className="flex items-center gap-3 p-3 bg-gray-50 rounded-lg">
                         <Badge variant="outline">Advanced</Badge>
-                        <span className="text-sm">Batch QR Generation</span>
+                        <span className="text-sm text-gray-800">Batch QR Generation</span>
                       </div>
                       <div className="flex items-center gap-3 p-3 bg-gray-50 rounded-lg">
                         <Badge variant="outline">Advanced</Badge>
-                        <span className="text-sm">Analytics Dashboard</span>
+                        <span className="text-sm text-gray-800">Analytics Dashboard</span>
                       </div>
                       <div className="flex items-center gap-3 p-3 bg-gray-50 rounded-lg">
                         <Badge variant="outline">Advanced</Badge>
-                        <span className="text-sm">API Integration</span>
+                        <span className="text-sm text-gray-800">API Integration</span>
                       </div>
                     </div>
                     <Button variant="outline" className="w-full">
@@ -414,19 +381,19 @@ const Help = () => {
             </TabsContent>
 
             {/* Video Tutorials Tab */}
-            <TabsContent value="videos" className="space-y-6">
+            <TabsContent value="videos" className="space-y-6 pt-6">
               <VideoTutorials />
             </TabsContent>
 
             {/* Tooltips Demo Tab */}
-            <TabsContent value="tooltips" className="space-y-6">
+            <TabsContent value="tooltips" className="space-y-6 pt-6">
               <div className="text-center mb-8">
                 <h2 className="text-3xl font-bold text-gray-900 mb-2">Interactive Help Tooltips</h2>
                 <p className="text-gray-600">Hover over the help icons to see contextual information</p>
               </div>
 
               <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
-                <Card>
+                <Card className="transition-all duration-300 ease-in-out hover:-translate-y-1 hover:shadow-xl hover:border-blue-500/50">
                   <CardHeader>
                     <CardTitle className="flex items-center gap-2">
                       Wallet Connection
@@ -442,7 +409,7 @@ const Help = () => {
                   </CardContent>
                 </Card>
 
-                <Card>
+                <Card className="transition-all duration-300 ease-in-out hover:-translate-y-1 hover:shadow-xl hover:border-blue-500/50">
                   <CardHeader>
                     <CardTitle className="flex items-center gap-2">
                       QR Code Verification
@@ -458,7 +425,7 @@ const Help = () => {
                   </CardContent>
                 </Card>
 
-                <Card>
+                <Card className="transition-all duration-300 ease-in-out hover:-translate-y-1 hover:shadow-xl hover:border-blue-500/50">
                   <CardHeader>
                     <CardTitle className="flex items-center gap-2">
                       Product Registration
@@ -474,7 +441,7 @@ const Help = () => {
                   </CardContent>
                 </Card>
 
-                <Card>
+                <Card className="transition-all duration-300 ease-in-out hover:-translate-y-1 hover:shadow-xl hover:border-blue-500/50">
                   <CardHeader>
                     <CardTitle className="flex items-center gap-2">
                       Custody Transfer
@@ -490,7 +457,7 @@ const Help = () => {
                   </CardContent>
                 </Card>
 
-                <Card>
+                <Card className="transition-all duration-300 ease-in-out hover:-translate-y-1 hover:shadow-xl hover:border-blue-500/50">
                   <CardHeader>
                     <CardTitle className="flex items-center gap-2">
                       Blockchain Status
@@ -506,7 +473,7 @@ const Help = () => {
                   </CardContent>
                 </Card>
 
-                <Card>
+                <Card className="transition-all duration-300 ease-in-out hover:-translate-y-1 hover:shadow-xl hover:border-blue-500/50">
                   <CardHeader>
                     <CardTitle className="flex items-center gap-2">
                       Pro Tips
@@ -525,11 +492,11 @@ const Help = () => {
             </TabsContent>
 
             {/* Help Settings Tab */}
-            <TabsContent value="settings" className="space-y-6">
+            <TabsContent value="settings" className="space-y-6 pt-6">
               <div className="max-w-2xl mx-auto">
                 <h2 className="text-3xl font-bold text-gray-900 mb-6">Help Settings</h2>
                 
-                <Card>
+                <Card className="transition-all duration-300 ease-in-out hover:-translate-y-1 hover:shadow-xl hover:border-blue-500/50">
                   <CardHeader>
                     <CardTitle>Customize Your Help Experience</CardTitle>
                     <CardDescription>
@@ -540,7 +507,7 @@ const Help = () => {
                     {helpSettings.map((setting, index) => (
                       <div key={index} className="flex items-center justify-between p-4 border rounded-lg">
                         <div className="flex-1">
-                          <h3 className="font-semibold">{setting.title}</h3>
+                          <h3 className="font-semibold text-gray-800">{setting.title}</h3>
                           <p className="text-sm text-gray-600">{setting.description}</p>
                         </div>
                         <Button
@@ -554,10 +521,10 @@ const Help = () => {
                     ))}
                     
                     <div className="border-t pt-6">
-                      <h3 className="font-semibold mb-4">Onboarding</h3>
+                      <h3 className="font-semibold text-gray-800 mb-4">Onboarding</h3>
                       <div className="space-y-3">
                         <div className="flex items-center justify-between">
-                          <span className="text-sm">Onboarding Status</span>
+                          <span className="text-sm text-gray-800">Onboarding Status</span>
                           <Badge variant={preferences.onboarding.completed ? "default" : "secondary"}>
                             {preferences.onboarding.completed ? "Completed" : "Not Started"}
                           </Badge>

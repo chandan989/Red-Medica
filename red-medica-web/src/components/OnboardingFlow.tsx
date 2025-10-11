@@ -25,12 +25,9 @@ export const OnboardingFlow = () => {
   const [currentStep, setCurrentStep] = useState(0);
   const [isVisible, setIsVisible] = useState(false);
 
-  // Show onboarding if not completed and user is new
   useEffect(() => {
-    if (preferences?.onboarding && !preferences.onboarding.completed && !preferences.onboarding.skipped) {
-      setIsVisible(true);
-    }
-  }, [preferences?.onboarding]);
+    setIsVisible(true);
+  }, []);
 
   const steps: OnboardingStep[] = [
     {
@@ -41,7 +38,7 @@ export const OnboardingFlow = () => {
       content: (
         <div className="space-y-4">
           <p className="text-gray-600">
-            Red Médica uses blockchain technology to create an immutable record of every medical product, 
+            Red Médica uses blockchain technology to create an immutable record of every medical product,
             ensuring authenticity and preventing counterfeit drugs from entering the supply chain.
           </p>
           <div className="bg-blue-50 p-4 rounded-lg">
@@ -64,7 +61,7 @@ export const OnboardingFlow = () => {
       content: (
         <div className="space-y-4">
           <p className="text-gray-600">
-            To interact with the blockchain, you'll need to connect a digital wallet. 
+            To interact with the blockchain, you'll need to connect a digital wallet.
             We support MetaMask and Polkadot.js extension.
           </p>
           <div className="bg-green-50 p-4 rounded-lg">
@@ -129,7 +126,7 @@ export const OnboardingFlow = () => {
       content: (
         <div className="space-y-4">
           <p className="text-gray-600">
-            Every authentic product has a unique QR code that links to its blockchain record. 
+            Every authentic product has a unique QR code that links to its blockchain record.
             Scanning this code instantly verifies the product's authenticity.
           </p>
           <div className="bg-orange-50 p-4 rounded-lg">
@@ -261,7 +258,7 @@ export const OnboardingFlow = () => {
               <X className="h-5 w-5" />
             </Button>
           </div>
-          
+
           <div className="space-y-2">
             <div className="flex items-center justify-between text-sm text-gray-600">
               <span>Step {currentStep + 1} of {steps.length}</span>
@@ -306,7 +303,7 @@ export const OnboardingFlow = () => {
                   {currentStepData.action.label}
                 </Button>
               )}
-              
+
               {currentStep === steps.length - 1 ? (
                 <Button onClick={handleComplete} className="flex items-center gap-2">
                   Complete
