@@ -1,6 +1,8 @@
-# 🏥 Red Médica
-
 <div align="center">
+
+<img src="logo.svg" alt="Red Médica Logo" width="200" height="200">
+
+# 🏥 Red Médica
 
 **Building trust in healthcare, one block at a time.**
 
@@ -1057,8 +1059,7 @@ cd contracts/medical_supply_chain
 cargo test
 
 # Test with output
-cargo test -- --nocapture
-```
+carg
 
 **Example Test:**
 
