@@ -13,7 +13,7 @@
 [![Substrate](https://img.shields.io/badge/Smart%20Contracts-Ink!-000000)](https://use.ink/)
 [![PRs Welcome](https://img.shields.io/badge/PRs-welcome-brightgreen.svg)](http://makeapullrequest.com)
 
-**🚀 Live Demo:** [Red Médica Platform](https://github.com/nikhlu07/Red-Medica) • **📋 Contract:** `0xAD6655fa10DB0DDDc079774198E76c457E2e0C8C`
+**🚀 Live Demo:** [Red Médica Platform](red-medica.vercel.app) • **📋 Contract:** `0xAD6655fa10DB0DDDc079774198E76c457E2e0C8C`
 
 </div>
 
