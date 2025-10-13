@@ -34,7 +34,7 @@
 
 **✅ Deployed on Moonbase Alpha Testnet**  
 **✅ MetaMask Integration Ready**  
-**✅ Local Database + Blockchain Sync**
+**✅ Blockchain Sync**
 
 </div>
 
